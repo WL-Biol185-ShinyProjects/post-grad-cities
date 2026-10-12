@@ -1,25 +1,6 @@
+
+# Describe layout of the app; user interface
+
 library(shiny)
 library(ggplot2)
 
-
-# Import Colonnade Connections Data
-connections_data <- read_csv("connections.csv",
-                             header = TRUE,
-)
-
-
-library(tidyverse)
-library(dplyr)
-
-# Rename column names
-colnames(connections_data)[6] <- "Major" 
-colnames(connections_data)[1] <- "Alum_ID" 
-colnames(connections_data)[2] <- "Class" 
-colnames(connections_data)[3] <- "Industry" 
-colnames(connections_data)[7] <- "Minor" 
-colnames(connections_data)[8] <- "Greek_Org"
-colnames(connections_data)[10] <- "Activities" 
-
-View(connections_data)
-
-connections_data$Major <- factor(connections_data$Major)
