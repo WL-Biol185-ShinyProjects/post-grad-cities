@@ -12,9 +12,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 
 # Import Colonnade Connections Data
-connections_data <- read_csv("connections.csv",
-                             header = TRUE,
-)
+connections_data <- read_csv("connections.csv")
+                            
 
 
 library(tidyverse)
@@ -28,8 +27,6 @@ colnames(connections_data)[3] <- "Industry"
 colnames(connections_data)[7] <- "Minor" 
 colnames(connections_data)[8] <- "Greek_Org"
 colnames(connections_data)[10] <- "Activities" 
-
-View(connections_data)
 
 connections_data$Major <- factor(connections_data$Major)
 ```
