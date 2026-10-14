@@ -28,7 +28,14 @@ colnames(connections_data)[7] <- "Minor"
 colnames(connections_data)[8] <- "Greek_Org"
 colnames(connections_data)[10] <- "Activities" 
 
+#Make a "city", "state" column
+connections_data <- connections_data %>%
+  unite("City_State", City, State, sep = ", ")
+connections_data$City_State[connections_data&City_State == "Arlington, VA"] <- "Washington, DC"
+
 connections_data$Major <- factor(connections_data$Major)
+connections_data$City_State <- factor(connections_data$City_State)
+
 
 View(connections_data)
 ```
