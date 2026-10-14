@@ -30,7 +30,7 @@ colnames(connections_data)[10] <- "Activities"
 
 #Make a "city", "state" column
 connections_data <- connections_data %>%
-  unite("City_State", City, State, sep = ", ", remove = FALSE) %>%
+  unite("City_State", City, State, sep = ", ",) %>%
   #Changing Arlington, VA to Washington, DC
   mutate(City_State = ifelse(City_State == "Arlington, VA", "Washington, DC", City_State))%>%
   #New Columns for multiple sports
