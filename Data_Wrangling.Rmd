@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 
 # Import Colonnade Connections Data
-connections_data <- read_csv("connections.csv")
+connections_data <- read.csv("connections.csv")
                             
 
 
@@ -29,6 +29,17 @@ colnames(connections_data)[8] <- "Greek_Org"
 colnames(connections_data)[10] <- "Activities" 
 
 connections_data$Major <- factor(connections_data$Major)
+
+View(connections_data)
 ```
 
+``` {r}
+#Import Population Data
 
+install.packages("readxl")
+library(readxl)
+
+population_data <- read_excel("clean_population.xlsx")
+
+View(population_data)
+```
