@@ -30,11 +30,27 @@ colnames(connections_data)[10] <- "Activities"
 
 #Make a "city", "state" column
 connections_data <- connections_data %>%
-  unite("City_State", City, State, sep = ", ")
-connections_data$City_State[connections_data&City_State == "Arlington, VA"] <- "Washington, DC"
+  unite("City_State", City, State, sep = ", ", remove = FALSE) %>%
+  #Changing Arlington, VA to Washington, DC
+  mutate(City_State = ifelse(City_State == "Arlington, VA", "Washington, DC", City_State))%>%
+  #New Columns for multiple sports
+  separate_wider_delim(
+    cols = Sports,
+    delim  = "; ",
+    names = c("Sport_1", "Sport_2", "Sport_3"),
+    too_few = "align_start",
+    too_many = "drop",
+    cols_remove = FALSE
+  )
+
 
 connections_data$Major <- factor(connections_data$Major)
 connections_data$City_State <- factor(connections_data$City_State)
+connections_data$Class <- factor(connections_data$Class)
+connections_data$Industry <- factor(connections_data$Industry)
+connections_data$Minor <- factor(connections_data$Minor)
+connections_data$Greek_Org <- factor(connections_data$Greek_Org)
+connections_data$Sports <- factor(connections_data$Sports)
 
 
 View(connections_data)
