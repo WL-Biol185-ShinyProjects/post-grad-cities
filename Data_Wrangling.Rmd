@@ -30,10 +30,11 @@ colnames(connections_data)[10] <- "Activities"
 
 #Make a "city", "state" column
 connections_data <- connections_data %>%
-  unite("City_State", City, State, sep = ", ",) %>%
-  #Combine redundant cities (grouping)
+ 
+  
+ unite("City_State", City, State, sep = ", ",) %>%
+  #Changing Arlington, VA to Washington, DC
   mutate(City_State = ifelse(City_State == "Arlington, VA", "Washington, DC", City_State))%>%
-  mutate(City_State = ifelse(City_State == "Brooklyn, NY", "New York, NY", City_State))%>%
   #New Columns for multiple sports
   separate_wider_delim(
     cols = Sports,
@@ -63,53 +64,9 @@ View(connections_data)
 install.packages("readxl")
 library(readxl)
 
-population_data <- read_excel("cleaner_population.xlsx")
-
-#Had to input data for Henrico, VA and Lexington, VA from census website
-
+population_data <- read_excel("clean_population.xlsx")
 
 View(population_data)
 ```
-``` {r}
-#Import rent data
-rent_data1 <- read.csv("rent.csv")
 
-#Delete unnecessary columns
-rent_data2 <- rent_data1 %>% select(-c(Rank, One.year.change, Five.year.change, Rent..2026))
 
-#Delete unnecessary rows
-rent_data <- rent_data2[rent_data2$City %in% c(
-  "New York, NY",
-  "Washinton, DC",
-  "Atlanta, GA",
-  "Charlotte, NC",
-  "Dallas, TX",
-  "Houston, TX",
-  "Richmond, VA",
-  "Austin, TX",
-  "Charlottesville, VA",
-  "Lexington, VA",
-  "Nashville, TN",
-  "Chicago, IL",
-  "Alexandria, VA",
-  "Raleigh, NC",
-  "Philadelphia, PA",
-  "Charleston, SC",
-  "San Francisco, CA",
-  "Baltimore, MD",
-  "Henrico, VA",
-  "Boston, MA",
-  "Denver, CO",
-  "Durham, NC",
-  "New Orleans, LA",
-  "Roanoke, VA",
-  "Birmingham, AL",
-  "Pittsburgh, PA",
-  "Cincinnati, OH",
-  "Fort Worth, TX",
-  "Greenville, SC",
-  "Tampa, FL"
-), ]
-
-View(rent_data)
-```
