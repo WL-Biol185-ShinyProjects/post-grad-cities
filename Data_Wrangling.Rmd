@@ -28,19 +28,25 @@ colnames(connections_data)[7] <- "Minor"
 colnames(connections_data)[8] <- "Greek_Org"
 colnames(connections_data)[10] <- "Activities" 
 
+View(connections_data)
+
+```
+
+```{r}
 #Make a "city", "state" column
 connections_data <- connections_data %>%
- 
+ unite("City_State", City, State, sep = ", ",) %>% 
   
- unite("City_State", City, State, sep = ", ",) %>%
-  #Changing Arlington, VA to Washington, DC
+#Changing Arlington, VA to Washington, DC
   mutate(City_State = ifelse(City_State == "Arlington, VA", "Washington, DC", City_State))%>%
-<<<<<<< HEAD
-=======
   mutate(City_State = ifelse(City_State == "Brooklyn, NY", "New York, NY", City_State))%>%
   mutate(City_State = ifelse(City_State == "Washington Dc, DC", "Washington, DC", City_State))%>%
   mutate(City_State = ifelse(City_State == "Washington D.C., DC", "Washington, DC", City_State))%>%
->>>>>>> ee609ab408f068b0cf222a788b8c68ec30b0b5d3
+  
+```
+
+
+```{r}
   #New Columns for multiple sports
   separate_wider_delim(
     cols = Sports,
@@ -84,10 +90,9 @@ population_data <- read_excel("clean_population.xlsx")
 View(population_data)
 ```
 
+```{r}
+#Delete unnecessary rows within population data
 
-<<<<<<< HEAD
-=======
-#Delete unnecessary rows
 rent_data <- rent_data2[rent_data2$City %in% c(
   "New York, NY",
   "Washington, DC",
@@ -124,11 +129,14 @@ rent_data <- rent_data2[rent_data2$City %in% c(
 rent_data$City <- factor(rent_data$City)
 
 View(rent_data)
+
 ```
+
 
 ```{r}
 #Create City Summary table based on Connections data
 #How many alumni in each city
+
 city_summary <- connections_data %>%
   group_by(City_State) %>%
   summarise(
@@ -138,6 +146,7 @@ city_summary <- connections_data %>%
   arrange(desc(Alumni_Count))
 
 View(city_summary)
+
 
 ```
 
@@ -186,11 +195,11 @@ city_industry_clean <- city_industry[city_industry$City_State %in% c(
   "Tampa, FL"
 ), ]
 
-View(city_industry_clean)
 
 ```
 
 ```{r}
+
 #Create City Greek Org table based on Connections data
 #How many alumni in each greek org in each city
 city_greekOrg <- connections_data %>%
@@ -200,8 +209,6 @@ city_greekOrg <- connections_data %>%
     .groups = "drop"
   ) %>%
   arrange(City_State, desc(Alumni_Count))
-
-View(city_greekOrg)
 
 ```
 
@@ -226,4 +233,84 @@ city_sport <- connections_data %>%
 View(city_sport)
 
 ```
->>>>>>> ee609ab408f068b0cf222a788b8c68ec30b0b5d3
+
+
+```{r}
+# Import and clean Labor Market Tightness Index dataset
+
+# Load tidyverse and readxl
+install.packages("readxl")
+library(tidyverse)
+library(readxl)
+
+
+# 2. Import Labor Market Tightness (uncleaned) dataset
+labor_market_tightness <- read_excel(
+  "labor_market_tightness_index.xlsx")
+  show_col_types = FALSE
+
+  
+# 3. Create reference table matching W&L's top 30 cities to their names in the original dataset
+city_lookup <- tribble(
+  ~City_State,           ~source_metro,
+  "New York, NY",        "New York-Newark-Jersey City, NY-NJ",
+  "Washington, DC",      "Washington-Arlington-Alexandria, DC-VA-MD-WV",
+  "Atlanta, GA",         "Atlanta-Sandy Springs-Roswell, GA",
+  "Charlotte, NC",       "Charlotte-Concord-Gastonia, NC-SC",
+  "Dallas, TX",          "Dallas-Fort Worth-Arlington, TX",
+  "Houston, TX",         "Houston-Pasadena-The Woodlands, TX",
+  "Richmond, VA",        "Richmond, VA",
+  "Austin, TX",          "Austin-Round Rock-San Marcos, TX",
+  "Charlottesville, VA", "Charlottesville, VA",
+  "Lexington, VA",       NA_character_,
+  "Nashville, TN",       "Nashville-Davidson--Murfreesboro--Franklin, TN",
+  "Chicago, IL",         "Chicago-Naperville-Elgin, IL-IN",
+  "Alexandria, VA",      "Washington-Arlington-Alexandria, DC-VA-MD-WV",
+  "Raleigh, NC",         "Raleigh-Cary, NC",
+  "Philadelphia, PA",    "Philadelphia-Camden-Wilmington, PA-NJ-DE-MD",
+  "Charleston, SC",      "Charleston-North Charleston, SC",
+  "San Francisco, CA",   "San Francisco-Oakland-Fremont, CA",
+  "Baltimore, MD",       "Baltimore-Columbia-Towson, MD",
+  "Henrico, VA",         "Richmond, VA",
+  "Boston, MA",          "Boston-Cambridge-Newton, MA-NH",
+  "Denver, CO",          "Denver-Aurora-Centennial, CO",
+  "Durham, NC",          "Durham-Chapel Hill, NC",
+  "New Orleans, LA",     "New Orleans-Metairie, LA",
+  "Roanoke, VA",         "Roanoke, VA",
+  "Birmingham, AL",      "Birmingham, AL",
+  "Pittsburgh, PA",      "Pittsburgh, PA",
+  "Cincinnati, OH",      "Cincinnati, OH-KY-IN",
+  "Fort Worth, TX",      "Dallas-Fort Worth-Arlington, TX",
+  "Greenville, SC",      "Greenville-Anderson-Greer, SC",
+  "Tampa, FL",           "Tampa-St. Petersburg-Clearwater, FL"
+)
+
+
+# 4. Filter and standardize dataset
+labor_tightness_clean <- city_lookup |>
+  filter(!is.na(source_metro)) |>      # filter() to exclude cities without a source metro
+  inner_join(                            
+    labor_market_tightness,
+    by = join_by(source_metro == City_State)
+  ) |>
+  mutate(
+    # Identify destinations using a shared metro value
+    metro_proxy = City_State %in% c(
+      "Alexandria, VA",
+      "Henrico, VA",
+      "Fort Worth, TX"
+    )
+  ) |>
+  select(
+    City_State,
+    Tightness_Index,
+    cbsa_code,
+    Rank,
+    source_metro,
+    metro_proxy
+  )
+
+
+```
+
+
