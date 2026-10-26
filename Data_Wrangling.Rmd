@@ -101,6 +101,9 @@ population_data <- read_excel("cleaner_population.xlsx")
 population_data <- population_data %>%
   rename(City_State = City)
 
+#Add size column
+
+
 View(population_data)
 ```
 
