@@ -15,10 +15,20 @@ knitr::opts_chunk$set(echo = TRUE)
 connections_data <- read.csv("connections.csv")
 
 # Installing packages and libraries
-install.packages("readxl")
+install.packages(c(
+  "readxl",
+  "ggplot2",
+  "sf",
+  "tigris",
+  "scales"
+  ))
+```
+
+```{r}
 library(readxl)
 library(tidyverse)
 library(dplyr)
+
 
 # Rename column names within connections_data
 colnames(connections_data)[6] <- "Major" 
@@ -42,8 +52,12 @@ connections_data <- connections_data %>%
   mutate(City_State = ifelse(City_State == "Arlington, VA", "Washington, DC", City_State))%>%
   mutate(City_State = ifelse(City_State == "Brooklyn, NY", "New York, NY", City_State))%>%
   mutate(City_State = ifelse(City_State == "Washington Dc, DC", "Washington, DC", City_State))%>%
-  mutate(City_State = ifelse(City_State == "Washington D.C., DC", "Washington, DC", City_State)) %>%
+  mutate(City_State = ifelse(City_State == "Washington D.C., DC", "Washington, DC", City_State))
   
+```
+
+
+```{r}
   #New Columns for multiple sports in connections_data
   separate_wider_delim(
     cols = Sports,
@@ -163,7 +177,7 @@ View(city_summary)
 ```{r}
 #Create City Industry table based on Connections data
 #How many people in each industry in each city
-city_industry1 <- connections_data %>%
+city_industry <- connections_data %>%
   group_by(City_State, Industry) %>%
   summarise(
     Alumni_Count = n_distinct(Alum_ID),
@@ -172,7 +186,7 @@ city_industry1 <- connections_data %>%
   arrange(City_State, desc(Alumni_Count))
 
 #Only include top 30 cities
-city_industry <- city_industry1[city_industry1$City_State %in% c(
+city_industry_clean <- city_industry[city_industry$City_State %in% c(
   "New York, NY",
   "Washington, DC",
   "Atlanta, GA",
@@ -383,18 +397,18 @@ labor_tightness_clean <- city_lookup |>
     metro_proxy
   )
 
-labor_tightness <- labor_tightness_clean %>% select(-c(cbsa_code, Rank, source_metro, metro_proxy))
-
-View(labor_tightness)
-
+View(labor_tightness_clean)
 ```
 
 
+<<<<<<< HEAD
 ```{r}
 city_master1 <- city_summary %>%
   left_join(population_data, by = "City_State") %>%
   left_join(rent_data, by = "City_State") %>%
   left_join(labor_tightness, by = "City_State")
+=======
+>>>>>>> 5f9e931866e83790b504fab9fe65f2a7fc7f77c5
 
 city_master <- city_master1[city_master1$City_State %in% c(
   "New York, NY",
@@ -429,7 +443,10 @@ city_master <- city_master1[city_master1$City_State %in% c(
   "Tampa, FL"
 ), ]
 
+<<<<<<< HEAD
 View(city_master)
 
 ```
 
+=======
+>>>>>>> 5f9e931866e83790b504fab9fe65f2a7fc7f77c5
