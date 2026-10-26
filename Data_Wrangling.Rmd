@@ -36,13 +36,13 @@ View(connections_data)
 ```{r}
 #Make a "city", "state" column within connections_data
 connections_data <- connections_data %>%
- unite("City_State", City, State, sep = ", ",) %>% 
+ unite("City_State", City, State, sep = ", ",) %>%
   
 #Changing Arlington, VA to Washington, DC
   mutate(City_State = ifelse(City_State == "Arlington, VA", "Washington, DC", City_State))%>%
   mutate(City_State = ifelse(City_State == "Brooklyn, NY", "New York, NY", City_State))%>%
   mutate(City_State = ifelse(City_State == "Washington Dc, DC", "Washington, DC", City_State))%>%
-  mutate(City_State = ifelse(City_State == "Washington D.C., DC", "Washington, DC", City_State))%>%
+  mutate(City_State = ifelse(City_State == "Washington D.C., DC", "Washington, DC", City_State))
   
 ```
 
@@ -85,13 +85,24 @@ View(connections_data)
 
 population_data <- read_excel("cleaner_population.xlsx")
 
+#Had to input data for Henrico, VA and Lexington, VA from census website
+
 View(population_data)
 ```
 
 ```{r}
+
 #Delete unnecessary rows within rent data
 
 
+
+#Import rent data
+rent_data1 <- read.csv("rent.csv")
+ 
+#Delete unnecessary columns
+rent_data2 <- rent_data1 %>% select(-c(Rank, One.year.change, Five.year.change, Rent..2026))
+
+#Delete unnecessary rows within population data
 rent_data <- rent_data2[rent_data2$City %in% c(
   "New York, NY",
   "Washington, DC",
