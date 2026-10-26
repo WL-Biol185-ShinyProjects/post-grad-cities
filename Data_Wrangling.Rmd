@@ -13,13 +13,14 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Import Colonnade Connections Data
 connections_data <- read.csv("connections.csv")
-                            
 
-
+# Installing packages and libraries
+install.packages("readxl")
+library(readxl)
 library(tidyverse)
 library(dplyr)
 
-# Rename column names
+# Rename column names within connections_data
 colnames(connections_data)[6] <- "Major" 
 colnames(connections_data)[1] <- "Alum_ID" 
 colnames(connections_data)[2] <- "Class" 
@@ -33,7 +34,7 @@ View(connections_data)
 ```
 
 ```{r}
-#Make a "city", "state" column
+#Make a "city", "state" column within connections_data
 connections_data <- connections_data %>%
  unite("City_State", City, State, sep = ", ",) %>% 
   
@@ -47,7 +48,7 @@ connections_data <- connections_data %>%
 
 
 ```{r}
-  #New Columns for multiple sports
+  #New Columns for multiple sports in connections_data
   separate_wider_delim(
     cols = Sports,
     delim  = "; ",
@@ -66,7 +67,7 @@ connections_data <- connections_data %>%
     cols_remove = TRUE
   )
 
-
+# Factor columns in connections_data
 connections_data$Major <- factor(connections_data$Major)
 connections_data$City_State <- factor(connections_data$City_State)
 connections_data$Class <- factor(connections_data$Class)
@@ -80,18 +81,16 @@ View(connections_data)
 ```
 
 ``` {r}
-#Import Population Data
+#Import Population Data and names as population_data
 
-install.packages("readxl")
-library(readxl)
-
-population_data <- read_excel("clean_population.xlsx")
+population_data <- read_excel("cleaner_population.xlsx")
 
 View(population_data)
 ```
 
 ```{r}
-#Delete unnecessary rows within population data
+#Delete unnecessary rows within rent data
+
 
 rent_data <- rent_data2[rent_data2$City %in% c(
   "New York, NY",
@@ -238,13 +237,8 @@ View(city_sport)
 ```{r}
 # Import and clean Labor Market Tightness Index dataset
 
-# Load tidyverse and readxl
-install.packages("readxl")
-library(tidyverse)
-library(readxl)
 
-
-# 2. Import Labor Market Tightness (uncleaned) dataset
+# 2. Import Labor Market Tightness dataset
 labor_market_tightness <- read_excel(
   "labor_market_tightness_index.xlsx")
   show_col_types = FALSE
@@ -310,7 +304,18 @@ labor_tightness_clean <- city_lookup |>
     metro_proxy
   )
 
-
 ```
 
+
+```{r}
+
+
+
+
+
+
+
+
+
+```
 
