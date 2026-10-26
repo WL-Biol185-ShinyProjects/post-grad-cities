@@ -42,12 +42,8 @@ connections_data <- connections_data %>%
   mutate(City_State = ifelse(City_State == "Arlington, VA", "Washington, DC", City_State))%>%
   mutate(City_State = ifelse(City_State == "Brooklyn, NY", "New York, NY", City_State))%>%
   mutate(City_State = ifelse(City_State == "Washington Dc, DC", "Washington, DC", City_State))%>%
-  mutate(City_State = ifelse(City_State == "Washington D.C., DC", "Washington, DC", City_State))
+  mutate(City_State = ifelse(City_State == "Washington D.C., DC", "Washington, DC", City_State)) %>%
   
-```
-
-
-```{r}
   #New Columns for multiple sports in connections_data
   separate_wider_delim(
     cols = Sports,
@@ -163,7 +159,7 @@ View(city_summary)
 ```{r}
 #Create City Industry table based on Connections data
 #How many people in each industry in each city
-city_industry <- connections_data %>%
+city_industry1 <- connections_data %>%
   group_by(City_State, Industry) %>%
   summarise(
     Alumni_Count = n_distinct(Alum_ID),
@@ -172,7 +168,7 @@ city_industry <- connections_data %>%
   arrange(City_State, desc(Alumni_Count))
 
 #Only include top 30 cities
-city_industry_clean <- city_industry[city_industry$City_State %in% c(
+city_industry <- city_industry1[city_industry1$City_State %in% c(
   "New York, NY",
   "Washington, DC",
   "Atlanta, GA",
@@ -219,6 +215,8 @@ city_greekOrg <- connections_data %>%
     .groups = "drop"
   ) %>%
   arrange(City_State, desc(Alumni_Count))
+
+View(city_greekOrg)
 
 ```
 
@@ -314,6 +312,10 @@ labor_tightness_clean <- city_lookup |>
     source_metro,
     metro_proxy
   )
+
+labor_tightness <- labor_tightness_clean %>% select(-c(cbsa_code, Rank, source_metro, metro_proxy))
+
+View(labor_tightness)
 
 ```
 
