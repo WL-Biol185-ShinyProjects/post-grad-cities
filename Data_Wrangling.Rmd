@@ -453,3 +453,55 @@ View(city_master)
 
 =======
 >>>>>>> 5f9e931866e83790b504fab9fe65f2a7fc7f77c5
+
+```{r}
+# Importing and cleaning US cities latitudes and longitudes database 
+cities_df <- read.csv("us_cities.csv")
+View(cities_df)
+
+#Make a "city", "state" column
+cities_df <- cities_df %>%
+ unite("City_State", CITY, STATE_CODE, sep = ", ")
+
+  
+  
+# Keep cities of interest 
+target_cities <- c(
+  "New York, NY",
+  "Washington, DC",
+  "Atlanta, GA",
+  "Charlotte, NC",
+  "Dallas, TX",
+  "Houston, TX",
+  "Richmond, VA",
+  "Austin, TX",
+  "Charlottesville, VA",
+  "Lexington, VA",
+  "Nashville, TN",
+  "Chicago, IL",
+  "Alexandria, VA",
+  "Raleigh, NC",
+  "Philadelphia, PA",
+  "Charleston, SC",
+  "San Francisco, CA",
+  "Baltimore, MD",
+  "Henrico, VA",
+  "Boston, MA",
+  "Denver, CO",
+  "Durham, NC",
+  "New Orleans, LA",
+  "Roanoke, VA",
+  "Birmingham, AL",
+  "Pittsburgh, PA",
+  "Cincinnati, OH",
+  "Fort Worth, TX",
+  "Greenville, SC",
+  "Tampa, FL"
+)
+
+# 2. Filter the dataset to keep only rows matching your list
+filtered_cities_df <- cities_df %>%
+  filter(City_State %in% target_cities)
+
+```
+
