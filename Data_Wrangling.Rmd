@@ -81,6 +81,11 @@ connections_data <- connections_data %>%
     cols_remove = TRUE
   )
 
+#Delete ", " in Major Column
+connections_data$Major <-
+  gsub("^, +",
+       "", connections_data$Major)
+
 # Factor columns in connections_data
 connections_data$Major <- factor(connections_data$Major)
 connections_data$City_State <- factor(connections_data$City_State)
