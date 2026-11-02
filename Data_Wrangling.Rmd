@@ -22,6 +22,10 @@ install.packages(c(
   "tigris",
   "scales"
   ))
+
+library(readxl)
+library(tidyverse)
+library(dplyr)
 ```
 
 ```{r}
@@ -59,7 +63,7 @@ connections_data <- connections_data %>%
 
 ```{r}
   #New Columns for multiple sports in connections_data
-  separate_wider_delim(
+separate_wider_delim(
     cols = Sports,
     delim  = "; ",
     names = c("Sport_1", "Sport_2", "Sport_3"),
@@ -87,7 +91,6 @@ connections_data$Greek_Org <- factor(connections_data$Greek_Org)
 connections_data$Sports <- factor(connections_data$Sports)
 
 
-View(connections_data)
 ```
 
 ``` {r}
@@ -456,15 +459,17 @@ View(city_master)
 
 ```{r}
 # Importing and cleaning US cities latitudes and longitudes database 
-cities_df <- read.csv("us_cities.csv")
-View(cities_df)
+# Used USPS PostalPro GIS data to add one missing observation (ID #29882) measuring the latitude and longitude for Henrico, VA.
+
+cities_df <- read.csv("cleaned_us_cities.csv")
 
 #Make a "city", "state" column
-cities_df <- cities_df %>%
- unite("City_State", CITY, STATE_CODE, sep = ", ")
+library(dplyr)
+library(tidyr)
 
-  
-  
+cities_df <- cities_df %>% 
+  unite(col = "City_State", CITY, STATE_CODE, sep = ", ")
+
 # Keep cities of interest 
 target_cities <- c(
   "New York, NY",
@@ -499,9 +504,14 @@ target_cities <- c(
   "Tampa, FL"
 )
 
-# 2. Filter the dataset to keep only rows matching your list
+# 2. Filter the dataset to keep only rows matching city list 
 filtered_cities_df <- cities_df %>%
-  filter(City_State %in% target_cities)
+  filter(City_State %in% target_cities) %>%
+  distinct(City_State, .keep_all = TRUE)
 
+```
+
+```{r eval=FALSE}
+View(filtered_cities_df)
 ```
 

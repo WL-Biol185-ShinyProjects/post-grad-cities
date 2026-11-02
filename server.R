@@ -6,17 +6,13 @@ library(tidyverse)
 library(sf)
 library(tigris)
 library(leaflet)
+library(dplyr)
 
+filtered_cities_df <- read.csv("cleaned_us_cities.csv")
 
-library(leaflet)
-
-leaflet() %>% addTiles()
-leaflet() %>% setView(lng = -95.7129, lat = 37.0902, zoom = 4) %>% 
-  addProviderTiles("Esri.WorldGrayCanvas")%>%
-  
-  
-cities_df <- read.csv("us_cities.csv")
-
+leaflet() %>% 
+  addProviderTiles("OpenStreetMap.Mapnik") %>% 
+  setView(lng = -95.7129, lat = 37.0902, zoom = 4)  
 
 # Add State Boundaries
 addPolygons(
@@ -33,6 +29,12 @@ addPolygons(
     bringToFront = TRUE
   ),
   label = ~name
-) 
+) %>% 
+  addMarkers(
+    data = cities_df,
+    lng = ~LONGITUDE,   # Replace with your actual longitude column name if different
+    lat = ~LATITUDE,    # Replace with your actual latitude column name if different
+    popup = ~City_State # Shows your "City, State" text when clicking a marker
+  )
   
   
