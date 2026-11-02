@@ -98,5 +98,3 @@ leaflet(data = lex) %>%
   addTiles() %>%
   addCircles(radius = ~rating, label = ~place)
 
-
-

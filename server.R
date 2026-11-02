@@ -32,8 +32,8 @@ addPolygons(
   addMarkers(
     data = city_coordinates_df,
     lng = ~LONGITUDE,   # Replace with your actual longitude column name if different
-    lat = ~LATITUDE,    # Replace with your actual latitude column name if different
-    popup = ~City_State # Shows your "City, State" text when clicking a marker
+    lat = ~LATITUDE,    # Replace with actual latitude column name if different
+    popup = ~City_State # Shows "City, State" text when clicking marker
   )
   
   
