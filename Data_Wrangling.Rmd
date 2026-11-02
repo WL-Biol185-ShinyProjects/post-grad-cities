@@ -59,18 +59,18 @@ connections_data <- connections_data %>%
 
 ```{r}
   #New Columns for multiple sports in connections_data
+connections_data <- connections_data %>%
   separate_wider_delim(
     cols = Sports,
-    delim  = "; ",
+    delim = "; ",
     names = c("Sport_1", "Sport_2", "Sport_3"),
     too_few = "align_start",
     too_many = "drop",
     cols_remove = FALSE
   ) %>%
-  #new Column for double major
   separate_wider_delim(
     cols = Major,
-    delim  = "; ",
+    delim = "; ",
     names = c("Major", "Major_2"),
     too_few = "align_start",
     too_many = "drop",
@@ -222,6 +222,8 @@ city_industry_clean <- city_industry[city_industry$City_State %in% c(
   "Tampa, FL"
 ), ]
 
+city_industry_clean$Industry <- factor(city_industry_clean$Industry)
+
 
 ```
 
@@ -270,7 +272,12 @@ city_greekOrg <- city_greekOrg1[city_greekOrg1$City_State %in% c(
   "Tampa, FL"
 ), ]
 
-View(city_greekOrg)
+city_greekOrg <- city_greekOrg %>%
+  mutate(Greek_Org = if_else(Greek_Org == "" | is.na(Greek_Org),
+                             "Independent", Greek_Org))
+
+city_greekOrg$Greek_Org <- factor(city_greekOrg$Greek_Org)
+
 
 ```
 
@@ -292,7 +299,7 @@ city_sport1 <- connections_data %>%
   ) %>%
   arrange(City_State, desc(Alumni_Count))
 
-city_sport <- city_sport1[city_sport$City_State %in% c(
+city_sport <- city_sport1[city_sport1$City_State %in% c(
   "New York, NY",
   "Washington, DC",
   "Atlanta, GA",
@@ -325,7 +332,7 @@ city_sport <- city_sport1[city_sport$City_State %in% c(
   "Tampa, FL"
 ), ]
 
-View(city_sport)
+city_sport$Sport <- factor(city_sport$Sport)
 
 ```
 
@@ -403,15 +410,69 @@ labor_tightness_clean <- city_lookup |>
 View(labor_tightness_clean)
 ```
 
+```{r}
 
-<<<<<<< HEAD
+#Create City Major table based on Connections data
+#How many alumni from each major in each city
+city_major1 <- connections_data %>%
+  pivot_longer(
+    cols = c(Major, Major_2),
+    names_to = "Major_Column",
+    values_to = "Major"
+  )%>%
+  filter(!is.na(Major), Major != "") %>%
+  distinct(Alum_ID, City_State, Major) %>%
+  group_by(City_State, Major) %>%
+  summarise(
+    Alumni_Count = n_distinct(Alum_ID),
+    .groups = "drop"
+  ) %>%
+  arrange(City_State, desc(Alumni_Count))
+
+city_major <- city_major1[city_major1$City_State %in% c(
+  "New York, NY",
+  "Washington, DC",
+  "Atlanta, GA",
+  "Charlotte, NC",
+  "Dallas, TX",
+  "Houston, TX",
+  "Richmond, VA",
+  "Austin, TX",
+  "Charlottesville, VA",
+  "Lexington, VA",
+  "Nashville, TN",
+  "Chicago, IL",
+  "Alexandria, VA",
+  "Raleigh, NC",
+  "Philadelphia, PA",
+  "Charleston, SC",
+  "San Francisco, CA",
+  "Baltimore, MD",
+  "Henrico, VA",
+  "Boston, MA",
+  "Denver, CO",
+  "Durham, NC",
+  "New Orleans, LA",
+  "Roanoke, VA",
+  "Birmingham, AL",
+  "Pittsburgh, PA",
+  "Cincinnati, OH",
+  "Fort Worth, TX",
+  "Greenville, SC",
+  "Tampa, FL"
+), ]
+
+city_major$Major <- factor(city_major$Major)
+
+```
+
 ```{r}
 city_master1 <- city_summary %>%
   left_join(population_data, by = "City_State") %>%
   left_join(rent_data, by = "City_State") %>%
-  left_join(labor_tightness, by = "City_State")
-=======
->>>>>>> 5f9e931866e83790b504fab9fe65f2a7fc7f77c5
+  left_join(labor_tightness_clean, by = "City_State")
+
+
 
 city_master <- city_master1[city_master1$City_State %in% c(
   "New York, NY",
@@ -446,13 +507,47 @@ city_master <- city_master1[city_master1$City_State %in% c(
   "Tampa, FL"
 ), ]
 
-<<<<<<< HEAD
-View(city_master)
+#Widen Connections Data
+city_sport_wide <- city_sport %>%
+  pivot_wider(
+    names_from = Sport,
+    values_from = Alumni_Count,
+    values_fill = 0,
+  )
+city_industry_wide <- city_industry %>%
+  pivot_wider(
+    names_from = Industry,
+    values_from = Alumni_Count,
+    values_fill = 0,
+    names_prefix = "Industry_"
+  )
+city_greekOrg_wide <- city_greekOrg %>%
+  pivot_wider(
+    names_from = Greek_Org,
+    values_from = Alumni_Count,
+    values_fill = 0,
+  )
+city_major_wide <- city_major %>%
+  pivot_wider(
+    names_from = Major,
+    values_from = Alumni_Count,
+    values_fill = 0,
+    names_prefix = "Major_"
+  )
+
+city_master <- city_master %>%
+  left_join(city_sport_wide, by = "City_State") %>%
+  left_join(city_industry_wide, by = "City_State") %>%
+  left_join(city_greekOrg_wide, by = "City_State") %>%
+  left_join(city_major_wide, by = "City_State") %>%
+  mutate(
+    across(where(is.numeric), ~ replace_na(.x, 0))
+  )
+
 
 ```
 
-=======
->>>>>>> 5f9e931866e83790b504fab9fe65f2a7fc7f77c5
+
 
 ```{r}
 # Importing and cleaning US cities latitudes and longitudes database 
