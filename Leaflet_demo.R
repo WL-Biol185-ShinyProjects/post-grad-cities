@@ -1,5 +1,8 @@
 
 library(leaflet)
+library(tigris)
+options(tigris_use_cache = TRUE)
+
 leaflet() %>% addTiles()
 leaflet() %>% setView(lng = -95.7129, lat = 37.0902, zoom = 4) %>% 
   addProviderTiles("Esri.WorldGrayCanvas")%>%

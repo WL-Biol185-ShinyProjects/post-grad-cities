@@ -600,13 +600,16 @@ target_cities <- c(
 )
 
 # 2. Filter the dataset to keep only rows matching city list 
-filtered_cities_df <- cities_df %>%
+city_coordinates_df <- cities_df %>%
   filter(City_State %in% target_cities) %>%
   distinct(City_State, .keep_all = TRUE)
+
+# Save as an RDS file (preserves R data types like factors/characters perfectly)
+saveRDS(city_coordinates_df, "city_coordinates_df.rds")
 
 ```
 
 ```{r eval=FALSE}
-View(filtered_cities_df)
+View(city_coordinates_df)
 ```
 

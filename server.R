@@ -8,15 +8,14 @@ library(tigris)
 library(leaflet)
 library(dplyr)
 
-filtered_cities_df <- read.csv("cleaned_us_cities.csv")
+options(tigris_use_cache = TRUE)
+city_coordinates_df <- readRDS("city_coordinates_df.rds")
 
-leaflet() %>% 
+leaflet(data = city_coordinates_df) %>% 
   addProviderTiles("OpenStreetMap.Mapnik") %>% 
-  setView(lng = -95.7129, lat = 37.0902, zoom = 4)  
-
-# Add State Boundaries
+  setView(lng = -95.7129, lat = 37.0902, zoom = 4) %>%   
 addPolygons(
-  data = us_states,
+  data = city_coordinates_df,
   fillColor = "#3182bd",
   weight = 1,
   opacity = 1,
@@ -31,7 +30,7 @@ addPolygons(
   label = ~name
 ) %>% 
   addMarkers(
-    data = cities_df,
+    data = city_coordinates_df,
     lng = ~LONGITUDE,   # Replace with your actual longitude column name if different
     lat = ~LATITUDE,    # Replace with your actual latitude column name if different
     popup = ~City_State # Shows your "City, State" text when clicking a marker
