@@ -152,6 +152,19 @@ rent_data <- rent_data2[rent_data2$City %in% c(
   "Tampa, FL"
 ), ]
 
+
+#Add any cities left out of data set by hand from zillow 
+rent_data <- rent_data %>%
+  add_row(City = "Charlottesville, VA", Rent..2025 = "$2,026")%>%
+  add_row(City = "Lexington, VA", Rent..2025 = "$1,500")%>%
+  add_row(City = "Alexandria, VA", Rent..2025 = "$2,703")%>%
+  add_row(City = "Charleston, SC", Rent..2025 = "$2,800")%>%
+  add_row(City = "Henrico, VA", Rent..2025 = "$2,100")%>%
+  add_row(City = "Roanoke, VA", Rent..2025 = "$1,300")%>%
+  add_row(City = "Birmingham, AL", Rent..2025 = "$1,150")%>%
+  add_row(City = "Greenville, SC", Rent..2025 = "$1,816")
+  
+
 rent_data$City <- factor(rent_data$City)
 
 #Rename city column
