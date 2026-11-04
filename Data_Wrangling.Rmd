@@ -615,6 +615,6 @@ saveRDS(city_coordinates_df, "city_coordinates_df.rds")
 ```
 
 ```{r eval=FALSE}
-View(city_coordinates_df)
+View(city_master)
 ```
 
