@@ -12,13 +12,14 @@ library(bslib)
 
 fluidPage(
   navbarPage("W&L Post-Grad Cities",
-             tabPanel("Home"),                     # Create Home webpage including heat map and questionnaire 
+             tabPanel("Home", 
+                                                     # Create Home webpage including heat map and questionnaire 
              tabPanel("Dive Into the Data"),
              tabPanel("Resources")
-  ),
+  )))
   
 
-  titlePanel("Interactive Map"),
+  titlePanel("Interactive Map")
   sidebarLayout(
     sidebarPanel(
       sliderInput(
@@ -33,6 +34,6 @@ fluidPage(
       leafletOutput("post_grad_city_interactive_map")                            #Output names also need to be unique. There's also a text Output, leaflet output, etc.
     )
   )
-)
+
 
 
