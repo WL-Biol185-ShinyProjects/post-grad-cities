@@ -4,6 +4,7 @@
 library(shiny)
 library(ggplot2)
 library(leaflet)
+#Add sources to other files to avoid merge conflicts
 
 
 fluidPage(

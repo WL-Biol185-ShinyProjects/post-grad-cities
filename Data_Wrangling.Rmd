@@ -62,29 +62,27 @@ connections_data <- connections_data %>%
 
 
 ```{r}
-  #New Columns for multiple sports in connections_data
-connections_data <- connections_data %>%
-  separate_wider_delim(
-    cols = Sports,
-    delim = "; ",
-    names = c("Sport_1", "Sport_2", "Sport_3"),
-    too_few = "align_start",
-    too_many = "drop",
-    cols_remove = FALSE
-  ) %>%
-  separate_wider_delim(
-    cols = Major,
-    delim = "; ",
-    names = c("Major", "Major_2"),
-    too_few = "align_start",
-    too_many = "drop",
-    cols_remove = TRUE
-  )
+
+library(dplyr)
+library(stringr)
 
 #Delete ", " in Major Column
-connections_data$Major <-
+connections_data$Major_1 <-
   gsub("^, +",
        "", connections_data$Major)
+
+  #New Columns for multiple sports  and major in connections_data
+s <- str_split(connections_data$Sports, "; ", simplify = TRUE)
+connections_data$Sport_1 <- s[,1]
+connections_data$Sport_2 <- s[,2]
+connections_data$Sport_3 <- s[,3]
+m <- str_split(connections_data$Major, "; |,", simplify = TRUE)
+connections_data$Major_1 <- m[,1]
+connections_data$Major_2 <- m[,2]
+
+
+
+
 
 # Factor columns in connections_data
 connections_data$Major <- factor(connections_data$Major)
@@ -109,10 +107,7 @@ population_data <- read_excel("cleaner_population.xlsx")
 population_data <- population_data %>%
   rename(City_State = City)
 
-#Add size column
 
-
-View(population_data)
 ```
 
 ```{r}
@@ -163,7 +158,6 @@ rent_data$City <- factor(rent_data$City)
 rent_data <- rent_data %>%
   rename(City_State = City)
 
-View(rent_data)
 
 ```
 
@@ -180,7 +174,6 @@ city_summary <- connections_data %>%
   ) %>%
   arrange(desc(Alumni_Count))
 
-View(city_summary)
 
 
 ```
@@ -415,7 +408,6 @@ labor_tightness_clean <- city_lookup |>
     metro_proxy
   )
 
-View(labor_tightness_clean)
 ```
 
 ```{r}
@@ -424,13 +416,13 @@ View(labor_tightness_clean)
 #How many alumni from each major in each city
 city_major1 <- connections_data %>%
   pivot_longer(
-    cols = c(Major, Major_2),
+    cols = c(Major_1, Major_2),
     names_to = "Major_Column",
-    values_to = "Major"
+    values_to = "Alumni_Major"
   )%>%
-  filter(!is.na(Major), Major != "") %>%
-  distinct(Alum_ID, City_State, Major) %>%
-  group_by(City_State, Major) %>%
+  filter(!is.na(Alumni_Major), Alumni_Major != "") %>%
+  distinct(Alum_ID, City_State, Alumni_Major) %>%
+  group_by(City_State, Alumni_Major) %>%
   summarise(
     Alumni_Count = n_distinct(Alum_ID),
     .groups = "drop"
@@ -470,7 +462,7 @@ city_major <- city_major1[city_major1$City_State %in% c(
   "Tampa, FL"
 ), ]
 
-city_major$Major <- factor(city_major$Major)
+city_major$Alumni_Major <- factor(city_major$Alumni_Major)
 
 ```
 
@@ -537,7 +529,7 @@ city_greekOrg_wide <- city_greekOrg %>%
   )
 city_major_wide <- city_major %>%
   pivot_wider(
-    names_from = Major,
+    names_from = Alumni_Major,
     values_from = Alumni_Count,
     values_fill = 0,
     names_prefix = "Major_"
