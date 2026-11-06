@@ -15,13 +15,13 @@ knitr::opts_chunk$set(echo = TRUE)
 connections_data <- read.csv("connections.csv")
 
 # Installing packages and libraries
-install.packages(c(
-  "readxl",
-  "ggplot2",
-  "sf",
-  "tigris",
-  "scales"
-  ))
+#install.packages(c(
+#  "readxl",
+#  "ggplot2",
+#  "sf",
+#  "tigris",
+#  "scales"
+#  ))
 
 library(readxl)
 library(tidyverse)
@@ -42,8 +42,6 @@ colnames(connections_data)[3] <- "Industry"
 colnames(connections_data)[7] <- "Minor" 
 colnames(connections_data)[8] <- "Greek_Org"
 colnames(connections_data)[10] <- "Activities" 
-
-View(connections_data)
 
 ```
 
@@ -617,9 +615,5 @@ city_coordinates_df <- cities_df %>%
 # Save as an RDS file (preserves R data types like factors/characters perfectly)
 saveRDS(city_coordinates_df, "city_coordinates_df.rds")
 
-```
-
-```{r eval=FALSE}
-View(city_master)
 ```
 
