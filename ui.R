@@ -10,6 +10,7 @@ library(bslib)
 #Add sources to other files to avoid merge conflicts
 
 
+
 fluidPage(
   navbarPage("W&L Post-Grad Cities",
              tabPanel("Home",
@@ -36,4 +37,21 @@ fluidPage(
 
 
 
+
+
+source("home.R")
+source("question.R")
+source("data.R")
+source("resources.R")
+
+fluidPage(
+  navbarPage(
+    title = "W&L Post-Grad Cities",
+    
+             homePage,
+             questionPage,
+             dataPage,
+             resourcesPage
+  )
+)
 
