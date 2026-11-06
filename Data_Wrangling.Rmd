@@ -169,7 +169,6 @@ rent_data$City <- factor(rent_data$City)
 rent_data <- rent_data %>%
   rename(City_State = City)
 
-
 ```
 
 
@@ -481,7 +480,8 @@ city_major$Alumni_Major <- factor(city_major$Alumni_Major)
 city_master1 <- city_summary %>%
   left_join(population_data, by = "City_State") %>%
   left_join(rent_data, by = "City_State") %>%
-  left_join(labor_tightness_clean, by = "City_State")
+  left_join(labor_tightness_clean, by = "City_State") %>% 
+  
 
 
 
@@ -555,6 +555,10 @@ city_master <- city_master %>%
     across(where(is.numeric), ~ replace_na(.x, 0))
   )
 
+city_master <- city_master %>%
+  rename(Rent_2025 = Rent..2025) %>% 
+  mutate(Rent_2025 = as.numeric(str_replace_all(Rent_2025, "[$,]", "")))
+
 
 ```
 
@@ -612,8 +616,10 @@ city_coordinates_df <- cities_df %>%
   filter(City_State %in% target_cities) %>%
   distinct(City_State, .keep_all = TRUE)
 
-# Save as an RDS file (preserves R data types like factors/characters perfectly)
-saveRDS(city_coordinates_df, "city_coordinates_df.rds")
+# 3. Join city_coordinates to city_master
 
+city_master <- city_master %>%
+  left_join(city_coordinates_df, by = "City_State")
+  
 ```
 

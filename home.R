@@ -12,8 +12,6 @@ city_master <- read.csv("city_master.csv")
 function(input, output) {
   
   output$cityMap <- renderleaflet({
-    
-    city_master %>%
       leaflet(city_master) %>% 
       setView(lng = -95.7129, lat = 37.0902, zoom = 4) %>%  
       addProviderTiles("OpenStreetMap.Mapnik") %>% 
@@ -47,24 +45,6 @@ function(input, output) {
   })
   
 }
-
-
-titlePanel("Interactive Map")
-sidebarLayout(
-  sidebarPanel(
-    sliderInput(
-      inputId = "citySelector",                #here is where you title your input; needs to be unique
-      label = "Explore Your Post-Grad City!",       # What you want the people viewing the app to read
-      min = min(city_master$Rent..2025),                #Min and max will be established accurately according to the values in the table at that time
-      max = max(city_master$Rent..2025),
-      value = c(min(city_master$Rent..2025), max(city_master$Rent..2025))                               #We want this to represent the full range of values
-    )
-  ),
-  mainPanel(
-    leafletOutput("cityMap")                            #Output names also need to be unique. There's also a text Output, leaflet output, etc.
-  )
-)
-
 
 
 
