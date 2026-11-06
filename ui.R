@@ -31,7 +31,7 @@ fluidPage(
       )
     ),
     mainPanel(
-      leafletOutput("post_grad_city_interactive_map")                            #Output names also need to be unique. There's also a text Output, leaflet output, etc.
+      leafletOutput("cityMap")                            #Output names also need to be unique. There's also a text Output, leaflet output, etc.
     )
   )
 

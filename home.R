@@ -17,6 +17,7 @@ function(input, output) {
       leaflet(city_master) %>% 
       setView(lng = -95.7129, lat = 37.0902, zoom = 4) %>%  
       addProviderTiles("OpenStreetMap.Mapnik") %>% 
+      
       addPolygons(
         fillColor = 
         "Blues", 
@@ -25,14 +26,17 @@ function(input, output) {
         opacity = 1,
         color = "white",
         fillOpacity = 0.4,
+        
         highlightOptions = highlightOptions(
           weight = 2,
           color = "#222",
           fillOpacity = 0.7,
           bringToFront = TRUE
         ),
+        
         label = ~name
       ) %>% 
+      
       addMarkers(
         data = city_coordinates_df,
         lng = ~LONGITUDE,   # Replace with your actual longitude column name if different
