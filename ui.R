@@ -8,15 +8,17 @@ library(leaflet)
 library(bslib)
 
 #Add sources to other files to avoid merge conflicts
-source("Home.R")
-source("Data.R")
-source("Resources.R")
+source("home.R")
+source("question.R")
+source("data.R")
+source("resources.R")
 
 fluidPage(
   navbarPage(
     title = "W&L Post-Grad Cities",
     
              homePage,
+             questionPage,
              dataPage,
              resourcesPage
   )
