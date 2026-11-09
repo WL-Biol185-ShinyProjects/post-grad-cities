@@ -1,9 +1,9 @@
-data_ui <- function() {
-  fluidPage(
-    plotOutput(("top_cities")),
-    plotOutput(("rent_vs_alumni"))
+dataPage <- tabPanel(
+  "Dive Into the Data",
+  h2("Explore the Data"),
+  plotOutput(("top_cities")),
+  plotOutput(("rent_vs_alumni"))
   )
-}
 
 data_server <- function(input, output) {
   master_city <- read.csv("city_master.csv")
