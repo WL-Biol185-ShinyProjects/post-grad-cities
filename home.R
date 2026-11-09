@@ -3,20 +3,26 @@ library(shiny)
 library(ggplot2)
 library(sf)
 library(leaflet)
+library(tidyverse)
 
 
 city_master <- read.csv("city_master.csv")
 
+# Import Home page server function
 
 # Create an interactive map from city_master dataframe (including all measured variables)
-function(input, output) {
-  
+server <- function(input, output) {
+  homeServer("home", city_master)
   output$cityMap <- renderleaflet({
       leaflet(city_master) %>% 
-      setView(lng = -95.7129, lat = 37.0902, zoom = 4) %>%  
+      setView(lng = -95.7129, lat = 37.0902, zoom = 4) %>%
+      addLegend(
+        cityMap, 
+        position = "topright"
+      ),
       addProviderTiles("OpenStreetMap.Mapnik") %>% 
       
-      addPolygons(
+      addCircleMarkers(
         fillColor = 
         "Blues", 
         domain = city_master$Alumni_Count,

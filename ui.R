@@ -13,7 +13,7 @@ library(bslib)
 
 fluidPage(
   navbarPage("W&L Post-Grad Cities",
-             tabPanel("Home",
+             tabPanel("Home", homeUI("home"),
                       titlePanel("Interactive Map"),
                       sidebarLayout(
                         sidebarPanel(
