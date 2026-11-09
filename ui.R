@@ -35,4 +35,4 @@ fluidPage(
                       # ),
              tabPanel("Dive Into the Data", data_ui()),
              tabPanel("Resources")
-  )))
+  ))

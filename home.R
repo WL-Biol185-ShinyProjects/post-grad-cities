@@ -89,7 +89,7 @@ home_server <- function(input, output) {
       ) %>% 
       
       addMarkers(
-        data = city_coordinates_df,
+        data = city_master,
         lng = ~LONGITUDE,   # Replace with your actual longitude column name if different
         lat = ~LATITUDE,    # Replace with actual latitude column name if different
         popup = ~City_State # Shows "City, State" text when clicking marker
