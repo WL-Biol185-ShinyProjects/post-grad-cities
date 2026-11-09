@@ -64,7 +64,9 @@ home_server <- function(input, output) {
         labFormat = labelFormat(
           digits = 0,
           big.mark = ","
-        )
+        ),
+        cityMap, 
+        position = "topright"
       )
       addProviderTiles("OpenStreetMap.Mapnik") %>% 
       addCircleMarkers(
