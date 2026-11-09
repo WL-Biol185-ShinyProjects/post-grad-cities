@@ -5,17 +5,14 @@ library(sf)
 library(leaflet)
 library(tidyverse)
 
-home_ui <- function() {
-  fluidPage(
-    h2("Home"),
-    leafletOutput("map", height = 600)
-    )
-}
-
 
 city_master <- read.csv("city_master.csv")
+homePage <- tabPanel(
+  "Home",
+  h2("Where Do W&L Alumni Live?"),
+  leafletOutput("cityMap", height = 600)
+)
 
-# Import Home page server function
 
 # Create an interactive map from city_master dataframe (including all measured variables)
 home_server <- function(input, output) {
@@ -34,7 +31,7 @@ home_server <- function(input, output) {
         column(
           width = 3,
           div(
-            style = paste0(
+            style = (
               "background-color: #f5f5f5;,
               padding: 25px;,
               border-radius: 15px;"
@@ -55,17 +52,16 @@ home_server <- function(input, output) {
         ))
   }
       )
-      addLegend(
-        position = "topright",
-        pal = pal,
-        values = values,
-        title = legend_title,
-        opacity = 0.85,
-        labFormat = labelFormat(
-          digits = 0,
-          big.mark = ","
-        ),
-      )
+      # addLegend(
+      #   position = "topright",
+      #   pal = pal,
+      #   values = values,
+      #   title = legend_title,
+      #   opacity = 0.85,
+      #   labFormat = labelFormat(
+      #     digits = 0,
+      #     big.mark = ","
+      #   ),
       addProviderTiles("OpenStreetMap.Mapnik") %>% 
       addCircleMarkers(
         fillColor = 
