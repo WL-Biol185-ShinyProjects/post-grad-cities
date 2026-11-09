@@ -66,7 +66,6 @@ home_server <- function(input, output) {
       addCircleMarkers(
         fillColor = 
         "Blues", 
-        domain = city_master$Alumni_Count,
         weight = 1,
         opacity = 1,
         color = "white",
