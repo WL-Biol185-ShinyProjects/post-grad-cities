@@ -19,7 +19,7 @@ city_master <- read.csv("city_master.csv")
 
 # Create an interactive map from city_master dataframe (including all measured variables)
 home_server <- function(input, output) {
-  output$cityMap <- renderleaflet({
+  output$cityMap <- renderLeaflet({
       leaflet(city_master) %>% 
       setView(lng = -95.7129, lat = 37.0902, zoom = 4) %>%
     # Create a layout with the map on the left and map controls on the right.
