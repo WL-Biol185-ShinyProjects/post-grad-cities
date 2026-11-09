@@ -1,15 +1,12 @@
-data_ui <- function(id) {
-  ns <- NS(id)
+data_ui <- function() {
   fluidPage(
     plotOutput(ns("top_cities")),
     plotOutput(ns("rent_vs_alumni"))
   )
 }
 
-data_server <- function(id) {
+data_server <- function(input, output) {
   master_city <- read.csv("city_master.csv")
-  
-  moduleServer(id, function(input, output, session) {
     
     # Which cities have the most alumni
     output$top_cities <- renderPlot({

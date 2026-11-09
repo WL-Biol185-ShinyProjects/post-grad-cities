@@ -17,7 +17,7 @@ source("resources.R")
 
 fluidPage(
   navbarPage("W&L Post-Grad Cities",
-             tabPanel("Home",homeUI("home"),
+             tabPanel("Home", home_ui("home")),
                       titlePanel("Interactive Map"),
                       sidebarLayout(
                         sidebarPanel(
@@ -33,6 +33,6 @@ fluidPage(
                           leafletOutput("cityMap")                            #Output names also need to be unique. There's also a text Output, leaflet output, etc.
                         )
                       ),
-             tabPanel("Dive Into the Data", data_ui("data")),
+             tabPanel("Dive Into the Data", data_ui()),
              tabPanel("Resources")
   )))
