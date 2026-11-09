@@ -6,7 +6,7 @@ library(leaflet)
 library(tidyverse)
 
 home_ui <- function() {
-  Fluidpage(
+  fluidPage(
     h2("Home"),
     leafletOutput("map", height = 600)
     )

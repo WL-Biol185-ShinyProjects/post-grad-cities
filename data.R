@@ -1,7 +1,7 @@
 data_ui <- function() {
   fluidPage(
-    plotOutput(ns("top_cities")),
-    plotOutput(ns("rent_vs_alumni"))
+    plotOutput(("top_cities")),
+    plotOutput(("rent_vs_alumni"))
   )
 }
 
@@ -29,5 +29,4 @@ data_server <- function(input, output) {
              x = "Average monthly rent ($)", y = "Number of Alumni") +
         theme_minimal()
     })
-  })
-}
+  }
