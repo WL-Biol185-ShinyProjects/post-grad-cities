@@ -19,7 +19,7 @@ server <- function(input, output) {
       addLegend(
         cityMap, 
         position = "topright"
-      ),
+      )
       addProviderTiles("OpenStreetMap.Mapnik") %>% 
       
       addCircleMarkers(

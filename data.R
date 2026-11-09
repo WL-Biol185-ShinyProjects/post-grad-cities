@@ -1,7 +1,6 @@
 data_ui <- function(id) {
   ns <- NS(id)
   fluidPage(
-    h2("Explore the Data"),
     plotOutput(ns("top_cities")),
     plotOutput(ns("rent_vs_alumni"))
   )

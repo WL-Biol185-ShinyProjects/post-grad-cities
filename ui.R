@@ -33,7 +33,6 @@ fluidPage(
                           leafletOutput("cityMap")                            #Output names also need to be unique. There's also a text Output, leaflet output, etc.
                         )
                       ),
-                                           # Create Home webpage including heat map and questionnaire
              tabPanel("Dive Into the Data", data_ui("data")),
              tabPanel("Resources")
   )))
