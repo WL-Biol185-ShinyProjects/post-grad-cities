@@ -5,6 +5,6 @@ library(dplyr)
 library(ggplot2)
 
 function(input, output) {
-  home_server("home")
+  home_server(input, output)
   data_server(input, output)
 }

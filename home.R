@@ -65,8 +65,6 @@ home_server <- function(input, output) {
           digits = 0,
           big.mark = ","
         ),
-        cityMap, 
-        position = "topright"
       )
       addProviderTiles("OpenStreetMap.Mapnik") %>% 
       addCircleMarkers(
