@@ -1,95 +1,84 @@
 
 library(shiny)
-library(ggplot2)
-library(sf)
 library(leaflet)
-library(tidyverse)
-
+library(shinydashboard)
 
 city_master <- read.csv("city_master.csv")
+
+interactive_map <- city_master[, c("City_State", "Alumni_Count", "pop_2025",     # Keep only columns we will use
+                                   "Rent_2025", "Tightness_Index",
+                                   "LATITUDE", "LONGITUDE")]
+
+# Create home page
 homePage <- tabPanel(
   "Home",
   h2("Where Do W&L Alumni Live?"),
-  leafletOutput("cityMap", height = 600)
-)
-
-
-# Create an interactive map from city_master dataframe (including all measured variables)
-home_server <- function(input, output) {
-  output$cityMap <- renderLeaflet({
-      leaflet(city_master) %>% 
-      setView(lng = -95.7129, lat = 37.0902, zoom = 4) %>%
-    # Create a layout with the map on the left and map controls on the right.
-      fluidRow(
-        column(
-          width = 9, 
-          leafletOutput(
-            outputID = ns("cityMap"),
-            height = "600px"
-          )),
-# Map controls         
-        column(
-          width = 3,
-          div(
-            style = (
-              "background-color: #f5f5f5;,
-              padding: 25px;,
-              border-radius: 15px;"
-              ),
-            h3("Map Controls"),      # Title inside the box
-            selectInput(
-              inputId = ns("mapVariable"),
-              label = "View by:",
-              choices = c(
-                "Alumni Concentration" = "Alumni_Count",
-                "Monthly Rent" = "Rent_2025",
-                "Population" = "pop_2025",
-                "Labor Market Tightness" = "Tightness_Index"
-                ),
-              selected = "Alumni_Count"
-            )
-          )
-        ))
-  }
-      )
-      # addLegend(
-      #   position = "topright",
-      #   pal = pal,
-      #   values = values,
-      #   title = legend_title,
-      #   opacity = 0.85,
-      #   labFormat = labelFormat(
-      #     digits = 0,
-      #     big.mark = ","
-      #   ),
-      addProviderTiles("OpenStreetMap.Mapnik") %>% 
-      addCircleMarkers(
-        fillColor = 
-        "Blues", 
-        weight = 1,
-        opacity = 1,
-        color = "white",
-        fillOpacity = 0.4,
-        
-        highlightOptions = highlightOptions(
-          weight = 2,
-          color = "#222",
-          fillOpacity = 0.7,
-          bringToFront = TRUE
-        ),
-        
-        label = ~name
-      ) %>% 
+  h4("Explore where Washington and Lee alumni have gone since 2016."),
+ 
+  # Left side: map, and right side: Map legend and controls 
+  fluidRow(
+    box(
+      width = 9,
+      leafletOutput("cityMap", height = "600px")
+    ),                                                
+    box(
+      width = 3,
       
-      addMarkers(
-        data = city_master,
-        lng = ~LONGITUDE,   # Replace with your actual longitude column name if different
-        lat = ~LATITUDE,    # Replace with actual latitude column name if different
-        popup = ~City_State # Shows "City, State" text when clicking marker
-      )
-    
-  }
+  # Create map legend
+      h4("Number of W&L Alumni"),
+      h4("Map Controls"),
+ selectInput("view_by", "View by:",
+              choices = c("Alumni Concentration", "Monthly Rent",
+                          "Population", "Labor Market Tightness")))))
   
 
+
+home_server <- function(input, output) {
+  
+  output$cityMap <- renderLeaflet({
+    
+# Which column and legend title go with the current dropdown choice. 
+# Switch ensures that if user wants to see Alumni Concentration, use Alumni_Count.
+  col_name <- switch(input$view_by,
+                       "Alumni Concentration" = "Alumni_Count",
+                       "Monthly Rent" = "Rent_2025",
+                       "Population" = "pop_2025",
+                       "Labor Market Tightness" = "Tightness_Index"
+    )
+  # Define legend arguments. Get values from selected column and make color scale 
+  vals <- city_master[[col_name]]
+  pal <- colorNumeric(palette = "YlOrRd", 
+                      domain = vals)       
+  
+  # Scale circle sizes
+  radius <- 4 + 16 * sqrt(vals / max(vals, na.rm = TRUE))
+  
+  
+# Creating the actual interactive map  
+  leaflet(city_master) %>%
+    addProviderTiles("OpenStreetMap.Mapnik") %>% 
+    addCircleMarkers(
+        lng = ~LONGITUDE, 
+        lat = ~LATITUDE,
+        radius = radius,
+        fillColor = pal(vals),
+        fillOpacity = 0.8,         # Fill opacity helps show colors better   
+        popup = ~City_State        # Shows "City, State" text when clicking marker
+    ) %>% 
+  setView(lng = -96, lat = 38, zoom = 4) %>%
+    addLegend(
+      position = "topright",
+      pal = pal,
+      values = vals,
+      title = input$view_by,
+      opacity = 0.85,
+      labFormat = labelFormat(
+        digits = 0,
+        big.mark = ","
+    )
+  )
+  })
+
+}
 
 
