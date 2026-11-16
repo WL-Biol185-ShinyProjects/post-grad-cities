@@ -184,8 +184,6 @@ city_summary <- connections_data %>%
   ) %>%
   arrange(desc(Alumni_Count))
 
-
-
 ```
 
 ```{r}
@@ -754,6 +752,8 @@ city_master <- city_master %>%
     `Industry_Hospitality Services`, `Industry_Entertainment/Leisure/Sports`,
     `Industry_`, `Industry_Bus. Other`, Industry_Service
   ))
+
+
 
 ```
 
