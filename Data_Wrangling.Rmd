@@ -480,10 +480,8 @@ city_major$Alumni_Major <- factor(city_major$Alumni_Major)
 city_master1 <- city_summary %>%
   left_join(population_data, by = "City_State") %>%
   left_join(rent_data, by = "City_State") %>%
-  left_join(labor_tightness_clean, by = "City_State") %>% 
+  left_join(labor_tightness_clean, by = "City_State")  
   
-
-
 
 city_master <- city_master1[city_master1$City_State %in% c(
   "New York, NY",
@@ -562,6 +560,202 @@ city_master <- city_master %>%
 
 ```
 
+
+```{r}
+# Merging industry columns into broader categories and renaming them
+
+
+# then the columns are added together. Backticks are needed around any column
+# name that contains spaces, hyphens, slashes, or ampersands.
+city_master <- city_master %>%
+  mutate(
+
+    # Finance (Finance + PE + all other finance subcategories)
+    Industry_Finance =
+      coalesce(Industry_Finance, 0) +
+      coalesce(`Industry_Finance - Private Equity`, 0) +
+      coalesce(`Industry_Finance - Investment Banking`, 0) +
+      coalesce(`Industry_Finance - Investment Management`, 0) +
+      coalesce(`Industry_Finance - Hedge Fund`, 0) +
+      coalesce(`Industry_Finance - Venture Capital`, 0) +
+      coalesce(`Industry_Finance - Commercial Banking`, 0) +
+      coalesce(`Industry_Finance - Consumer Banking`, 0) +
+      coalesce(`Industry_Finance - Sales & Trading`, 0) +
+      coalesce(`Industry_Finance - LBO`, 0) +
+      coalesce(`Industry_Investments/Finance`, 0) +
+      coalesce(`Industry_Banking/Commerce`, 0) +
+      coalesce(`Industry_Financial Services`, 0) +
+      coalesce(`Industry_Financial Services - Diversified`, 0),
+
+    # Insurance
+    Industry_Insurance =
+      coalesce(Industry_Insurance, 0) +
+      coalesce(`Industry_Insurance/Diversified Financials`, 0),
+
+    # Consulting
+    Industry_Consulting =
+      coalesce(Industry_Consulting, 0) +
+      coalesce(`Industry_Professional Services`, 0),
+
+    # Human Resources
+    Industry_Human_Resources =
+      coalesce(`Industry_Human Resources`, 0),
+
+    # Accounting (single column; coalesce just fills NAs with 0)
+    Industry_Accounting =
+      coalesce(Industry_Accounting, 0),
+
+    # Law
+    Industry_Legal =
+      coalesce(`Industry_Legal Services`, 0),
+
+    # Technology
+    Industry_Technology =
+      coalesce(`Industry_Tech - Software`, 0) +
+      coalesce(`Industry_Tech - Services`, 0) +
+      coalesce(`Industry_Tech - Internet Services`, 0) +
+      coalesce(`Industry_Tech - Hardware`, 0) +
+      coalesce(`Industry_Tech - Consumer Electronics`, 0) +
+      coalesce(Industry_Computer, 0) +
+      coalesce(Industry_Electronics, 0) +
+      coalesce(`Industry_Data Analytics`, 0) +
+      coalesce(Industry_Telecommunications, 0) +
+      coalesce(`Industry_Healthcare - Biotechnology`, 0),
+
+    # Healthcare & Life Sciences
+    Industry_Healthcare =
+      coalesce(`Industry_Healthcare - Delivery/Provider`, 0) +
+      coalesce(`Industry_Healthcare - Services/Other`, 0) +
+      coalesce(`Industry_Healthcare - Medical Devices`, 0) +
+      coalesce(`Industry_Healthcare - Pharmaceuticals`, 0) +
+      coalesce(`Industry_Healthcare - Medicine/Research`, 0) +
+      coalesce(`Industry_Scientific Research`, 0),
+
+    # Government, Policy & Defense
+    Industry_Government =
+      coalesce(`Industry_Government - Federal`, 0) +
+      coalesce(`Industry_Government - State/Local`, 0) +
+      coalesce(`Industry_Government - Other`, 0) +
+      coalesce(`Industry_Government - Armed Forces`, 0) +
+      coalesce(`Industry_Government - International`, 0) +
+      coalesce(`Industry_Political Campaign`, 0) +
+      coalesce(`Industry_International Development`, 0) +
+      coalesce(`Industry_Aerospace & Defense`, 0),
+
+    # Education
+    Industry_Education =
+      coalesce(`Industry_Education - Higher Ed`, 0) +
+      coalesce(`Industry_Education - Pre K - 12`, 0) +
+      coalesce(`Industry_Education - Other`, 0) +
+      coalesce(`Industry_Education/Schools`, 0),
+
+    # Nonprofit & Social Impact
+    Industry_Nonprofit =
+      coalesce(`Industry_Non-Profit Organization`, 0) +
+      coalesce(`Industry_Public Charity`, 0) +
+      coalesce(Industry_Foundation, 0) +
+      coalesce(`Industry_Foundation - Other`, 0) +
+      coalesce(`Industry_Organizations/Associations/Society`, 0) +
+      coalesce(`Industry_Development-Fundraising`, 0) +
+      coalesce(`Industry_Human/Social Services`, 0) +
+      coalesce(`Industry_Economic/Community Development`, 0) +
+      coalesce(Industry_Religion, 0),
+
+    # Real Estate
+    Industry_Real_Estate =
+      coalesce(`Industry_Real Estate - Commercial`, 0) +
+      coalesce(`Industry_Real Estate - Finance`, 0) +
+      coalesce(`Industry_Real Estate - Residential`, 0) +
+      coalesce(Industry_Construction, 0) +
+      coalesce(Industry_Architecture, 0),
+
+    # Engineering
+    Industry_Engineering =
+      coalesce(Industry_Engineering, 0) +
+      coalesce(`Industry_Engineering & Science`, 0),
+
+    # Energy & Industrial
+    Industry_Energy_Industrial =
+      coalesce(Industry_Energy, 0) +
+      coalesce(Industry_Utilities, 0) +
+      coalesce(Industry_Environment, 0) +
+      coalesce(Industry_Manufacturing, 0) +
+      coalesce(Industry_Chemical, 0) +
+      coalesce(Industry_Agriculture, 0) +
+      coalesce(Industry_Transportation, 0),
+
+    # Media, Marketing & Creative
+    Industry_Media_Marketing =
+      coalesce(`Industry_Advertising/Public Relations`, 0) +
+      coalesce(`Industry_Print/Publishing`, 0) +
+      coalesce(`Industry_Broadcast/Film/Multimedia`, 0) +
+      coalesce(`Industry_Arts/Culture`, 0),
+
+    # Consumer, Retail & Hospitality
+    Industry_Consumer_Retail =
+      coalesce(`Industry_Consumer Products`, 0) +
+      coalesce(`Industry_Retail/Wholesale`, 0) +
+      coalesce(`Industry_Food/Beverage`, 0) +
+      coalesce(`Industry_Food Products`, 0) +
+      coalesce(`Industry_Textiles & Apparel`, 0) +
+      coalesce(`Industry_Hospitality Services`, 0) +
+      coalesce(`Industry_Entertainment/Leisure/Sports`, 0),
+
+    # Other / Undecided (Industry_ is the blank-named column)
+    Industry_Other =
+      coalesce(`Industry_`, 0) +
+      coalesce(`Industry_Bus. Other`, 0) +
+      coalesce(Industry_Service, 0)
+  )
+
+# Dropping old columns
+
+city_master <- city_master %>%
+  select(-c(
+    `Industry_Finance - Private Equity`, `Industry_Finance - Investment Banking`,
+    `Industry_Finance - Investment Management`, `Industry_Finance - Hedge Fund`,
+    `Industry_Finance - Venture Capital`, `Industry_Finance - Commercial Banking`,
+    `Industry_Finance - Consumer Banking`, `Industry_Finance - Sales & Trading`,
+    `Industry_Finance - LBO`, `Industry_Investments/Finance`,
+    `Industry_Banking/Commerce`, `Industry_Financial Services`,
+    `Industry_Financial Services - Diversified`,
+    `Industry_Insurance/Diversified Financials`,
+    `Industry_Professional Services`,
+    `Industry_Human Resources`,
+    `Industry_Legal Services`,
+    `Industry_Tech - Software`, `Industry_Tech - Services`,
+    `Industry_Tech - Internet Services`, `Industry_Tech - Hardware`,
+    `Industry_Tech - Consumer Electronics`, Industry_Computer,
+    Industry_Electronics, `Industry_Data Analytics`, Industry_Telecommunications,
+    `Industry_Healthcare - Biotechnology`,
+    `Industry_Healthcare - Delivery/Provider`, `Industry_Healthcare - Services/Other`,
+    `Industry_Healthcare - Medical Devices`, `Industry_Healthcare - Pharmaceuticals`,
+    `Industry_Healthcare - Medicine/Research`, `Industry_Scientific Research`,
+    `Industry_Government - Federal`, `Industry_Government - State/Local`,
+    `Industry_Government - Other`, `Industry_Government - Armed Forces`,
+    `Industry_Government - International`, `Industry_Political Campaign`,
+    `Industry_International Development`, `Industry_Aerospace & Defense`,
+    `Industry_Education - Higher Ed`, `Industry_Education - Pre K - 12`,
+    `Industry_Education - Other`, `Industry_Education/Schools`,
+    `Industry_Non-Profit Organization`, `Industry_Public Charity`,
+    Industry_Foundation, `Industry_Foundation - Other`,
+    `Industry_Organizations/Associations/Society`, `Industry_Development-Fundraising`,
+    `Industry_Human/Social Services`, `Industry_Economic/Community Development`,
+    Industry_Religion,
+    `Industry_Real Estate - Commercial`, `Industry_Real Estate - Finance`,
+    `Industry_Real Estate - Residential`, Industry_Construction, Industry_Architecture,
+    `Industry_Engineering & Science`,
+    Industry_Energy, Industry_Utilities, Industry_Environment, Industry_Manufacturing,
+    Industry_Chemical, Industry_Agriculture, Industry_Transportation,
+    `Industry_Advertising/Public Relations`, `Industry_Print/Publishing`,
+    `Industry_Broadcast/Film/Multimedia`, `Industry_Arts/Culture`,
+    `Industry_Consumer Products`, `Industry_Retail/Wholesale`,
+    `Industry_Food/Beverage`, `Industry_Food Products`, `Industry_Textiles & Apparel`,
+    `Industry_Hospitality Services`, `Industry_Entertainment/Leisure/Sports`,
+    `Industry_`, `Industry_Bus. Other`, Industry_Service
+  ))
+
+```
 
 
 ```{r}
