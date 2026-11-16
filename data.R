@@ -15,7 +15,7 @@ data_server <- function(input, output) {
         ggplot(aes(x = reorder(City_State, Alumni_Count), y = Alumni_Count)) +
         geom_col(fill = "#0B3D91") +
         coord_flip() +
-        labs(title = "Top 10 cities for W&L alumni", x = NULL, y = "Number of Alumni") +
+        labs(title = "Top 10 cities for W&L young alumni", x = NULL, y = "Number of Young Alumni") +
         theme_minimal()
     })
     

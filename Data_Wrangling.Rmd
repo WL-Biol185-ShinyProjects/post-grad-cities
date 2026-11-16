@@ -480,7 +480,7 @@ city_major$Alumni_Major <- factor(city_major$Alumni_Major)
 city_master1 <- city_summary %>%
   left_join(population_data, by = "City_State") %>%
   left_join(rent_data, by = "City_State") %>%
-  left_join(labor_tightness_clean, by = "City_State") %>% 
+  left_join(labor_tightness_clean, by = "City_State")
   
 
 
