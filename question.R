@@ -1,12 +1,3 @@
-# Your Major columns have duplicates with stray spaces
-# ("Major_History" vs "Major_ History"). This trims the spaces and
-# ADDS the duplicates together so no alumni are missed.
-count_for <- function(df, col_name) {
-  clean   <- gsub("_\\s+", "_", names(df))
-  matches <- which(clean == col_name)
-  rowSums(df[, matches, drop = FALSE], na.rm = TRUE)
-}
-
 # Rescale a vector to 0-1 so every question is worth the same.
 rescale01 <- function(x) {
   if (max(x) == min(x)) return(rep(0, length(x)))
@@ -38,12 +29,42 @@ questionPage <- tabPanel(
                selected = character(0)),   # character(0) = nothing pre-checked
   
   radioButtons("q_major", "2. What is your major?",
-               choices = c("Economics"        = "Major_Economics",
-                           "Politics"         = "Major_Politics",
+               choices = c("Accounting" = "Major_Accounting",
+                           "Art History" = "Major_Art History",
+                           "Biochemistry" = "Major_Biochemistry",
+                           "Biology" = "Major_Biology",
+                           "Business Administration" = "Major_Business Administration",
+                           "Chemistry" = "Major_Chemistry",
+                           "Classics" = "Major_Classics",
+                           "Cognitive and Behavioral Science" = "Major_Cognitive and Behavioral Science",
                            "Computer Science" = "Major_Computer Science",
-                           "Business Admin"   = "Major_Business Administration",
-                           "English"          = "Major_English",
-                           "Biology"          = "Major_Biology"),
+                           "East Asian Languages and Literatures" = "Major_East Asian Languages and Literatures",
+                           "Economics" = "Major_Economics",
+                           "English" = "Major_English",
+                           "Environmental Studies" = "Major_Environmental Studies",
+                           "Engineering" = "Major_Engineering",
+                           "French" = "Major_French",
+                           "Geology" = "Major_Geology",
+                           "German" = "Major_German",
+                           "History" = "Major_History",
+                           "Independent Work" = "Major_Independent Work",
+                           "Journalism" = "Major_Journalism",
+                           "Mathematics" = "Major_Mathematics",
+                           "Medieval and Renaissance Studies" = "Major_Medieval and Renaissance Studies",
+                           "Music" = "Major_Music",
+                           "Neuroscience" = "Major_Neuroscience",
+                           "Philosophy" = "Major_Philosophy",
+                           "Physics" = "Major_Physics",
+                           "Politics" = "Major_Politics",
+                           "Psychology" = "Major_Psychology",
+                           "Religion" = "Major_Religion",
+                           "Romance Languages" = "Major_Romance Languages",
+                           "Russian Area Studies" = "Major_Russian Area Studies",
+                           "Sociology and Anthropology" = "Major_Sociology and Anthropology",
+                           "Spanish" = "Major_Spanish",
+                           "Strategic Communication" = "Major_Strategic Communication",
+                           "Studio Art" = "Major_Studio Art",
+                           "Theater" = "Major_Theater"),
                selected = character(0)),
   
   radioButtons("q_size", "3. What size city do you want?",
@@ -51,8 +72,14 @@ questionPage <- tabPanel(
                            "No preference" = "any"),
                selected = character(0)),
   
-  radioButtons("q_rent", "4. How important is affordable rent?",
-               choices = c("Very important" = "cheap", "Not important" = "any"),
+  radioButtons("q_rent", "4. What monthly rent range would you be willing to pay?",
+               choices = c("Under $1,000" = "under1000",
+                           "$1,000–$1,499" = "1000_1499",
+                           "$1,500–$1,999" = "1500_1999",
+                           "$2,000–$2,499" = "2000_2499",
+                           "$2,500–$2,999" = "2500_2999",
+                           "$3,000 or more" = "3000plus",
+                           "No preference" = "any"),
                selected = character(0)),
   
   radioButtons("q_community", "5. Do you want a big alumni community?",
@@ -122,19 +149,41 @@ question_server <- function(input, output) {
     req(input$q_industry, input$q_major, input$q_size,
         input$q_rent, input$q_community, input$q_sport, input$q_greek)
     
-    df    <- read.csv("city_master_final.csv", check.names = FALSE)
+    df    <- read.csv("city_master_done.csv", check.names = FALSE)
     score <- rep(0, nrow(df))
     
     # Q1 + Q2: share of a city's alumni in that industry / major
     score <- score + rescale01(df[[input$q_industry]] / df$Alumni_Count)
-    score <- score + rescale01(count_for(df, input$q_major) / df$Alumni_Count)
+    score <- score + rescale01(df[[input$q_major]] / df$Alumni_Count)
     
     # Q3: city size (pop_2025)
     if (input$q_size == "big")   score <- score + rescale01(df$pop_2025)
     if (input$q_size == "small") score <- score + (1 - rescale01(df$pop_2025))
     
-    # Q4: cheaper rent = more points
-    if (input$q_rent == "cheap") score <- score + (1 - rescale01(df$Rent_2025))
+    # Q4: rent range
+    if (input$q_rent == "under1000") {
+      score <- score + (df$Rent_2025 < 1000)
+    }
+    
+    if (input$q_rent == "1000_1499") {
+      score <- score + (df$Rent_2025 >= 1000 & df$Rent_2025 < 1500)
+    }
+    
+    if (input$q_rent == "1500_1999") {
+      score <- score + (df$Rent_2025 >= 1500 & df$Rent_2025 < 2000)
+    }
+    
+    if (input$q_rent == "2000_2499") {
+      score <- score + (df$Rent_2025 >= 2000 & df$Rent_2025 < 2500)
+    }
+    
+    if (input$q_rent == "2500_2999") {
+      score <- score + (df$Rent_2025 >= 2500 & df$Rent_2025 < 3000)
+    }
+    
+    if (input$q_rent == "3000plus") {
+      score <- score + (df$Rent_2025 >= 3000)
+    }
     
     # Q5: bigger alumni base = more points
     if (input$q_community == "yes") score <- score + rescale01(df$Alumni_Count)

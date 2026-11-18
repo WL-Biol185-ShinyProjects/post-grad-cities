@@ -4,7 +4,7 @@ library(leaflet)
 library(shinydashboard)
 
 # Loading data and creating new dataframe that filters columns we need
-city_master <- read.csv("city_master_final.csv")
+city_master <- read.csv("city_master_done.csv")
 
 interactive_map <- city_master[, c("City_State", "Alumni_Count", "pop_2025",     # Keep only columns we will use
                                    "Rent_2025", "Tightness_Index",
