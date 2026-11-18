@@ -6,11 +6,11 @@ dataPage <- tabPanel(
   )
 
 data_server <- function(input, output) {
-  master_city <- read.csv("city_master.csv")
+  city_master <- read.csv("city_master_final.csv")
     
     # Which cities have the most alumni
     output$top_cities <- renderPlot({
-      master_city %>%
+      city_master %>%
         slice_max(Alumni_Count, n = 10) %>%
         ggplot(aes(x = reorder(City_State, Alumni_Count), y = Alumni_Count)) +
         geom_col(fill = "#0B3D91") +
@@ -21,7 +21,7 @@ data_server <- function(input, output) {
     
     # Rent vs. alumni
     output$rent_vs_alumni <- renderPlot({
-      ggplot(master_city, aes(x = Rent_2025, y = Alumni_Count)) +
+      ggplot(city_master, aes(x = Rent_2025, y = Alumni_Count)) +
         geom_point(color = "#0B3D91", size = 3) +
         geom_text(aes(label = City_State), vjust = -0.8, size = 3,
                   check_overlap = TRUE) +

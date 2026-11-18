@@ -1,9 +1,170 @@
+# Your Major columns have duplicates with stray spaces
+# ("Major_History" vs "Major_ History"). This trims the spaces and
+# ADDS the duplicates together so no alumni are missed.
+count_for <- function(df, col_name) {
+  clean   <- gsub("_\\s+", "_", names(df))
+  matches <- which(clean == col_name)
+  rowSums(df[, matches, drop = FALSE], na.rm = TRUE)
+}
+
+# Rescale a vector to 0-1 so every question is worth the same.
+rescale01 <- function(x) {
+  if (max(x) == min(x)) return(rep(0, length(x)))
+  (x - min(x)) / (max(x) - min(x))
+}
+
 questionPage <- tabPanel(
   "Find Your Ideal Post Grad City",
-  titlePanel("Questionairre")
+  
+  
+  radioButtons("q_industry", "1. Which industry interests you most?",
+               choices = c("Insurance"          = "Industry_Insurance",
+                           "Engineering"        = "Industry_Engineering",
+                           "Accounting"         = "Industry_Accounting",
+                           "Consulting"         = "Industry_Consulting",
+                           "Finance"            = "Industry_Finance",
+                           "Human Resources"    = "Industry_Human_Resources",
+                           "Legal"              = "Industry_Legal",
+                           "Technology"         = "Industry_Technology",
+                           "Healthcare"         = "Industry_Healthcare",
+                           "Government"         = "Industry_Government",
+                           "Education"          = "Industry_Education",
+                           "Nonprofit"          = "Industry_Nonprofit",
+                           "Real Estate"        = "Industry_Real_Estate",
+                           "Energy / Industrial" = "Industry_Energy_Industrial",
+                           "Media / Marketing"  = "Industry_Media_Marketing",
+                           "Consumer / Retail"  = "Industry_Consumer_Retail",
+                           "Other"              = "Industry_Other"),
+               selected = character(0)),   # character(0) = nothing pre-checked
+  
+  radioButtons("q_major", "2. What is your major?",
+               choices = c("Economics"        = "Major_Economics",
+                           "Politics"         = "Major_Politics",
+                           "Computer Science" = "Major_Computer Science",
+                           "Business Admin"   = "Major_Business Administration",
+                           "English"          = "Major_English",
+                           "Biology"          = "Major_Biology"),
+               selected = character(0)),
+  
+  radioButtons("q_size", "3. What size city do you want?",
+               choices = c("Big city" = "big", "Small city" = "small",
+                           "No preference" = "any"),
+               selected = character(0)),
+  
+  radioButtons("q_rent", "4. How important is affordable rent?",
+               choices = c("Very important" = "cheap", "Not important" = "any"),
+               selected = character(0)),
+  
+  radioButtons("q_community", "5. Do you want a big alumni community?",
+               choices = c("A lot" = "yes", "Doesn't matter" = "no"),
+               selected = character(0)),
+  
+  # "none" is a choice so people who didn't play a sport / go Greek can answer
+  radioButtons("q_sport", "6. Which sport did you play (or care about most)?",
+               choices = c("None / not applicable" = "none",
+                           "Baseball"            = "Baseball",
+                           "Basketball"          = "Basketball",
+                           "Cross-Country"       = "Cross-Country",
+                           "Field Hockey"        = "Field Hockey",
+                           "Football"            = "Football",
+                           "Golf"                = "Golf",
+                           "Lacrosse"            = "Lacrosse",
+                           "Riding (Equestrian)" = "Riding (Equestrian)",
+                           "Soccer"              = "Soccer",
+                           "Swimming"            = "Swimming",
+                           "Tennis"              = "Tennis",
+                           "Track & Field (Indoor)"  = "Track & Field-In",
+                           "Track & Field (Outdoor)" = "Track & Field-Out",
+                           "Volleyball"          = "Volleyball",
+                           "Wrestling"           = "Wrestling"),
+               selected = character(0)),
+  
+  radioButtons("q_greek", "7. What is your Greek affiliation?",
+               choices = c("None / not applicable" = "none",
+                           "Independent"          = "Independent",
+                           "Alpha Delta Pi"       = "Alpha Delta Pi",
+                           "Alpha Kappa Alpha"    = "Alpha Kappa Alpha",
+                           "Beta Theta Pi"        = "Beta Theta Pi",
+                           "Chi Omega"            = "Chi Omega",
+                           "Chi Psi"              = "Chi Psi",
+                           "Delta Society"        = "Delta Society",
+                           "Kappa Alpha"          = "Kappa Alpha",
+                           "Kappa Alpha Theta"    = "Kappa Alpha Theta",
+                           "Kappa Delta"          = "Kappa Delta",
+                           "Kappa Kappa Gamma"    = "Kappa Kappa Gamma",
+                           "Kappa Sigma"          = "Kappa Sigma",
+                           "Lambda Chi Alpha"     = "Lambda Chi Alpha",
+                           "Phi Beta Sigma"       = "Phi Beta Sigma",
+                           "Phi Delta Theta"      = "Phi Delta Theta",
+                           "Phi Gamma Delta"      = "Phi Gamma Delta",
+                           "Phi Kappa Psi"        = "Phi Kappa Psi",
+                           "Phi Zeta Delta"       = "Phi Zeta Delta",
+                           "Pi Beta Phi"          = "Pi Beta Phi",
+                           "Pi Kappa Alpha"       = "Pi Kappa Alpha",
+                           "Pi Kappa Phi"         = "Pi Kappa Phi",
+                           "Sigma Alpha Epsilon"  = "Sigma Alpha Epsilon",
+                           "Sigma Chi"            = "Sigma Chi",
+                           "Sigma Nu"             = "Sigma Nu",
+                           "Sigma Phi Epsilon"    = "Sigma Phi Epsilon"),
+               selected = character(0)),
+  
+  actionButton("q_go", "Get my recommendation"),
+  hr(),
+  uiOutput("q_result")   # filled in by question_server()
 )
 
-
 question_server <- function(input, output) {
-
+  
+  # eventReactive: runs only when the button is clicked
+  recs <- eventReactive(input$q_go, {
+    
+    # Stop quietly until every question is answered
+    req(input$q_industry, input$q_major, input$q_size,
+        input$q_rent, input$q_community, input$q_sport, input$q_greek)
+    
+    df    <- read.csv("city_master_final.csv", check.names = FALSE)
+    score <- rep(0, nrow(df))
+    
+    # Q1 + Q2: share of a city's alumni in that industry / major
+    score <- score + rescale01(df[[input$q_industry]] / df$Alumni_Count)
+    score <- score + rescale01(count_for(df, input$q_major) / df$Alumni_Count)
+    
+    # Q3: city size (pop_2025)
+    if (input$q_size == "big")   score <- score + rescale01(df$pop_2025)
+    if (input$q_size == "small") score <- score + (1 - rescale01(df$pop_2025))
+    
+    # Q4: cheaper rent = more points
+    if (input$q_rent == "cheap") score <- score + (1 - rescale01(df$Rent_2025))
+    
+    # Q5: bigger alumni base = more points
+    if (input$q_community == "yes") score <- score + rescale01(df$Alumni_Count)
+    
+    # Q6: sport. The sport column name IS the radio value, so we can index
+    #     the data directly. "none" adds no points.
+    if (input$q_sport != "none") {
+      score <- score + rescale01(df[[input$q_sport]] / df$Alumni_Count)
+    }
+    
+    # Q7: Greek org, same idea (Independent is also a column in your data)
+    if (input$q_greek != "none") {
+      score <- score + rescale01(df[[input$q_greek]] / df$Alumni_Count)
+    }
+    
+    df$score <- score
+    head(df[order(-df$score),
+            c("City_State", "score", "Rent_2025", "pop_2025", "Alumni_Count")], 3)
+  })
+  
+  output$q_result <- renderUI({
+    r <- recs()
+    tagList(
+      h3("Your top matches"),
+      tags$ol(lapply(seq_len(nrow(r)), function(i) {
+        tags$li(strong(r$City_State[i]),
+                sprintf(" - avg rent $%s, %s alumni",
+                        format(r$Rent_2025[i], big.mark = ","),
+                        r$Alumni_Count[i]))
+      }))
+    )
+  })
 }
