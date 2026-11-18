@@ -1,7 +1,3 @@
-resourcesPage <- tabPanel(
-  "Resources",
-  titlePanel("About Us")
-)
 
 about_us_server <- function(input, output) {
   city_master <- read.csv("city_master_final.csv")
