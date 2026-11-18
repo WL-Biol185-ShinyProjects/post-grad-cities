@@ -10,4 +10,5 @@ function(input, output) {
   home_server(input, output)
   data_server(input, output)
   question_server(input, output)
+  about_us_server(input, output)
 }

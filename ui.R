@@ -13,6 +13,7 @@ source("home.R")
 source("question.R")
 source("data.R")
 source("resources.R")
+source("about_us.R")
 
   navbarPage(
     title = "W&L Post-Grad Cities",
