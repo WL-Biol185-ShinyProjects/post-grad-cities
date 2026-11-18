@@ -758,6 +758,103 @@ city_master <- city_master %>%
 ```
 
 
+``` {r}
+city_master <- city_master %>%
+  mutate(
+    Major_Accounting = coalesce(Major_Accounting, 0) +
+                       coalesce(`Major_ Accounting`, 0) +
+                       coalesce(`Major_ Public Accounting`, 0) +
+                       coalesce(`Major_ Public Accounting`, 0) +
+                       coalesce(`Major_ Accounting and Bus Adm`, 0) +
+                       coalesce(`Major_ Accounting and Bus Adm`, 0),
+
+    Major_History = coalesce(Major_History, 0) + coalesce(`Major_ History`, 0),
+    Major_English = coalesce(Major_English, 0) + coalesce(`Major_ English`, 0),
+    Major_Religion = coalesce(Major_Religion, 0) + coalesce(`Major_ Religion`, 0),
+    Major_Economics = coalesce(Major_Economics, 0) + coalesce(`Major_ Economics`, 0),
+    Major_Politics = coalesce(Major_Politics, 0) + coalesce(`Major_ Politics`, 0),
+    Major_Classics = coalesce(Major_Classics, 0) + coalesce(`Major_ Classics`, 0),
+    Major_Philosophy = coalesce(Major_Philosophy, 0) + coalesce(`Major_ Philosophy`, 0),
+    Major_Physics = coalesce(Major_Physics, 0) + coalesce(`Major_ Physics`, 0),
+    Major_Biology = coalesce(Major_Biology, 0) + coalesce(`Major_ Biology`, 0),
+    Major_Neuroscience = coalesce(Major_Neuroscience, 0) + coalesce(`Major_ Neuroscience`, 0),
+    Major_Biochemistry = coalesce(Major_Biochemistry, 0) + coalesce(`Major_ Biochemistry`, 0),
+    Major_Engineering = coalesce(Major_Engineering, 0) + coalesce(`Major_ Engineering`, 0),
+    Major_Mathematics = coalesce(Major_Mathematics, 0) + coalesce(`Major_ Mathematics`, 0),
+    Major_Journalism = coalesce(Major_Journalism, 0) + coalesce(`Major_ Journalism`, 0),
+    Major_Psychology = coalesce(Major_Psychology, 0) + coalesce(`Major_ Psychology`, 0),
+    `Major_Computer Science` = coalesce(`Major_Computer Science`, 0) + coalesce(`Major_ Computer Science`, 0),
+    `Major_Business Administration` = coalesce(`Major_Business Administration`, 0) + coalesce(`Major_ Business Administration`, 0),
+    `Major_Sociology and Anthropology` = coalesce(`Major_Sociology and Anthropology`, 0) + coalesce(`Major_ Sociology and Anthropology`, 0),
+    `Major_Strategic Communication` = coalesce(`Major_Strategic Communication`, 0) + coalesce(`Major_ Strategic Communication`, 0),
+    `Major_Physics Engineering` = coalesce(`Major_Physics-Engineering`, 0) + coalesce(`Major_ Physics-Engineering`, 0),
+    `Major_East Asian Languages and Literatures` = coalesce(`Major_East Asian Languages and Literatures`, 0) + coalesce(`Major_ East Asian Languages and Literatures`, 0)
+  )
+
+# --- STEP 2: Merge majors that are the same field under different names ---
+city_master <- city_master %>%
+  mutate(
+    Major_Journalism = coalesce(Major_Journalism, 0) +
+                       coalesce(`Major_Journalism and Mass Communication`, 0),
+
+    Major_German = coalesce(Major_German, 0) +
+                   coalesce(`Major_German Language`, 0),
+
+    `Major_Sociology and Anthropology` = coalesce(`Major_Sociology and Anthropology`, 0) +
+                                         coalesce(Major_Sociology, 0),
+
+    Major_Geology = coalesce(Major_Geology, 0) +
+                    coalesce(`Major_Earth and Environmental Geoscience`, 0),
+
+    Major_Engineering = coalesce(Major_Engineering, 0) +
+                        coalesce(`Major_Integrated Engineering`, 0) +
+                        coalesce(`Major_Chemistry-Engineering`, 0) +
+                        coalesce(`Major_Physics Engineering`, 0)
+  )
+
+# --- STEP 3: Drop the columns that are now merged ---
+city_master <- city_master %>%
+  select(-c(
+    `Major_ Accounting`,
+    `Major_ Public Accounting`,
+    `Major_ Accounting and Bus Adm`,
+    `Major_ History`,
+    `Major_ English`,
+    `Major_ Religion`,
+    `Major_ Economics`,
+    `Major_ Politics`,
+    `Major_ Classics`,
+    `Major_ Philosophy`,
+    `Major_ Physics`,
+    `Major_ Biology`,
+    `Major_ Neuroscience`,
+    `Major_ Biochemistry`,
+    `Major_ Engineering`,
+    `Major_ Mathematics`,
+    `Major_ Journalism`,
+    `Major_ Psychology`,
+    `Major_ Computer Science`,
+    `Major_ Business Administration`,
+    `Major_ Sociology and Anthropology`,
+    `Major_ Strategic Communication`,
+    `Major_ Physics-Engineering`,
+    `Major_ East Asian Languages and Literatures`,
+
+    `Major_Public Accounting`,
+    `Major_Accounting and Bus Adm`,
+
+    `Major_Integrated Engineering`,
+    `Major_Chemistry-Engineering`,
+    `Major_Physics-Engineering`,
+    `Major_Physics Engineering`,
+
+    `Major_Journalism and Mass Communication`,
+    `Major_German Language`,
+    Major_Sociology,
+    `Major_Earth and Environmental Geoscience`
+  ))
+```
+
 ```{r}
 # Importing and cleaning US cities latitudes and longitudes database 
 # Used USPS PostalPro GIS data to add one missing observation (ID #29882) measuring the latitude and longitude for Henrico, VA.

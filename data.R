@@ -6,7 +6,7 @@ dataPage <- tabPanel(
   )
 
 data_server <- function(input, output) {
-  city_master <- read.csv("city_master_final.csv")
+  city_master <- read.csv("city_master_done.csv")
     
     # Which cities have the most alumni
     output$top_cities <- renderPlot({
