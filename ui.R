@@ -19,6 +19,7 @@ source("about_us.R")
     title = "W&L Post-Grad Cities",
              homePage,
              dataPage,
-             questionPage
+             questionPage,
+             about_usPage
   )
 
