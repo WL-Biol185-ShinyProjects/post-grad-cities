@@ -1,6 +1,7 @@
 
 about_us_server <- function(input, output) {
   city_master <- read.csv("city_master_final.csv")
+}
 
 about_usPage <- tabPanel("about_us",
                     fluidRow(
@@ -70,5 +71,5 @@ about_usPage <- tabPanel("about_us",
                               )
                             )
 )
-}
+
                         
