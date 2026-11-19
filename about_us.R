@@ -3,16 +3,15 @@ about_us_server <- function(input, output) {
   city_master <- read.csv("city_master_final.csv")
 }
 
-about_usPage <- tabPanel("about_us",
+about_usPage <- tabPanel("About Us!",
                     fluidRow(
                       column(width = 12,
-                             h2("About Us"),
+                             h2("Meet the Team"),
                              hr()
                       )
                     ),
                     fluidRow(
                       box(width = 12,
-                          h3("Meet The Team"),
                           hr(),
                           fluidRow(
                             column(width = 2,
