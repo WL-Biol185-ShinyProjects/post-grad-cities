@@ -7,6 +7,7 @@ library(dplyr)
 library(ggplot2)
 library(leaflet)
 library(bslib)
+library(tidyr)
 
 #Add sources to other files to avoid merge conflicts
 source("home.R")
