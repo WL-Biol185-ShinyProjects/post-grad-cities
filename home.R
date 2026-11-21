@@ -143,7 +143,7 @@ div(
     class = "banner-text",
     
     h1("Find Your Post-Grad City!"),                                 
-    p("Explore where Washington and Lee alumni have gone since 2016.")  
+    p("Explore where Washington and Lee alumni have found careers since 2016.")  
   )
 ),
   h2("Where Do W&L Alumni Live?"),
