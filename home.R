@@ -13,36 +13,180 @@ interactive_map <- city_master[, c("City_State", "Alumni_Count", "pop_2025",    
 # Create home page layout
 homePage <- tabPanel(
   "Home",
-  h2("Where Do W&L Alumni Live?"),
-  h4("Explore where Washington and Lee alumni have gone since 2016."),
+  
+# Add the CSS for the banner.
+  tags$head(
+    # Import font styles
+    tags$link(
+      rel = "stylesheet",
+      href = paste0(
+        "https://fonts.googleapis.com/css2?",
+        "family=EB+Garamond:wght@400;500;600;700",
+        "&family=Inter:wght@400;500;600;700",
+        "&display=swap"
+      )
+    ),
+    
+# Campus background photo banner 
+    tags$style(HTML("
+        .campus-banner {
+        width: 100%;
+        box-sizing: border-box;          /* Include padding in the banner width */
+        margin: 0 0 28px;               /* Leave space below the banner */
+        background-image: url('background_wlu_pic.png');
+        background-size: cover;         /* fill the banner, crop if needed */
+        background-position: center;    
+        background-repeat: no-repeat;
+        height: 320px;                 
+        display: flex;
+        align-items: center;
+        padding: 0 clamp(16px, 4vw, 64px)
+
+/* Make the photo run edge-to-edge. This closes the gap under the navbar. */
+        margin: -20px -15px 28px -15px;
+        }
+      
+/* Translucent white title box */
+     .banner-text {
+        background-color: #FFFFFF;  
+        padding: 32px 42px;
+        max-width: 810px;              
+        width: 100%;                
+      }
+
+/* Main title */
+      .banner-text h1 {
+        font-family: 'EB Garamond', Georgia, serif;
+        font-size: 48px;
+        font-weight: 600;
+        color: #142F56;
+        line-height: 1.2;
+        margin-top: 0;          
+        margin-bottom: 12px;
+      }
+
+/* Subtitle */
+      .banner-text p {
+        font-family: 'Inter', Arial, sans-serif;
+        font-size: 17px;
+        font-weight: 400;
+        line-height: 1.6;
+        color: #40556C;
+        margin-bottom: 0;
+      }
+      
+/* Map card */
+      .map-card {
+        background-color: #FFFFFF;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+        padding: 8px;                   
+        margin-bottom: 30px;
+      }
+      .map-card .leaflet-container {        /* Round the corners of the map */
+        border-radius: 6px;
+        font-family: 'Inter', Arial, sans-serif;
+      }
+
+/* Legend box on the map: rounder corners + Inter font. */
+      .leaflet .info.legend {
+        font-family: 'Inter', Arial, sans-serif;
+        border-radius: 6px;
+        padding: 10px 12px;
+      }
+      
+/* Map controls card (right-hand panel) */
+   .controls-card {
+        background-color: #FFFFFF;
+        border-radius: 8px 8px 0 0;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+        overflow: visible;               /* clips header to rounded corners */
+        margin-bottom: 30px;
+      }
+/* Map Controls navy header */
+      .controls-header {
+        background-color: #142F56;
+        color: #FFFFFF;
+        font-family: 'EB Garamond', Georgia, serif; 
+        font-size: 28px;                            
+        font-weight: 600;
+        margin: 0;                      /* cancel Bootstrap heading margins */
+        padding: 14px 24px;
+      }
+
+/* White area under the heading that holds the dropdown. */
+      .controls-body {
+        padding: 20px 24px 12px 24px;
+      }
+      .controls-body label {            /* the 'View by:' label */
+        font-family: 'Inter', Arial, sans-serif;
+        font-size: 17px;
+        font-weight: 600;
+        color: #142F56;
+      }
+      .controls-body .selectize-input,
+      .controls-body select {           /* the dropdown box */
+        font-family: 'Inter', Arial, sans-serif;
+        font-size: 16px;
+        border-radius: 6px;
+      }
+
+    "))
+  ),
+
+# div(class = "campus-banner") is the 320px photo strip (CSS above)
+# div(class = "banner-text") is the translucent white box on top of it
+div(
+  class = "campus-banner",
+  
+  div(
+    class = "banner-text",
+    
+    h1("Find Your Post-Grad City!"),                                 
+    p("Explore where Washington and Lee alumni have gone since 2016.")  
+  )
+),
  
 # Left side: map
   fluidRow(
-    box(
+    column(
       width = 9,
-      leafletOutput("cityMap", height = "600px")
+      div(
+        class = "map-card",
+        leafletOutput("cityMap", height = "600px")
+      )
     ),
     
 # right side: map legend/controls 
-    box(
+    column(
       width = 3,
-      h4("Number of W&L Alumni"),
-      h4("Map Controls"),
-      selectInput(
-        "view_by", 
-        "View by:",
-      choices = c(
-        "Alumni Concentration",
-        "Monthly Rent",
-        "Population", 
-        "Labor Market Tightness")))
- )
-)
+      div(
+        class = "controls-card",
+        h3("Map Controls", class = "controls-header"),
+        div(
+          class = "controls-body",
+          selectInput(
+            inputId = "view_by",
+            label   = "View by:",
+            choices = c("Alumni Concentration",
+                        "Monthly Rent",
+                        "Population",
+                        "Labor Market Tightness"),
+            width   = "100%"
+          )
+        )
+      )
+    ) # Closes right side map legend 
+  ) # Closes fluidRow for map on left side
+) # Closes tabPanel 
+
+
   
 # Create home page server 
 home_server <- function(input, output) {
   
   output$cityMap <- renderLeaflet({
+    req(input$view_by)
     
 # Which column and legend title go with the current dropdown choice. 
 # Switch(): app uses Alumni_Count if user selects Alumni Concentration option
@@ -68,6 +212,7 @@ home_server <- function(input, output) {
   leaflet(interactive_map) %>%
     addProviderTiles("OpenStreetMap.Mapnik") %>% 
     addCircleMarkers(
+        stroke = FALSE,  # Removes blue rings outside the circle markers
         lng = ~LONGITUDE, 
         lat = ~LATITUDE,
         radius = radius,
@@ -90,7 +235,8 @@ home_server <- function(input, output) {
       opacity = 0.85,
       labFormat = labelFormat(
         digits = 0,
-        big.mark = ","
+        big.mark = ",",
+        prefix = "\u2002"   # prefix adds two spaces before each number, giving it room to the right of the tick mark
     )
   )
   
