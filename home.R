@@ -146,6 +146,15 @@ div(
     p("Explore where Washington and Lee alumni have gone since 2016.")  
   )
 ),
+  h2("Where Do W&L Alumni Live?"),
+  
+  p("Choosing where to live after graduation is a big decision. With so many cities offering different career opportunities, costs of living, and lifestyles, it can be difficult to know where to start."),
+  
+  p("We created this app to help Washington and Lee students explore potential places to live after graduation. Using data on W&L alumni from the classes of 2016–2025, the app highlights where recent graduates have settled and allows users to compare cities based on alumni concentration, monthly rent, population, and labor market conditions."),
+  
+  p("Our goal is to make the post-grad decision-making process easier by connecting alumni experiences with real-world city data. Whether you are looking for a city with a strong W&L alumni community, affordable housing, or promising career opportunities, this tool can help you find a place that fits your priorities."),
+  
+  h4("Explore where Washington and Lee alumni have gone since 2016"),
  
 # Left side: map
   fluidRow(

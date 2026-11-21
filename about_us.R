@@ -3,16 +3,15 @@ about_us_server <- function(input, output) {
   city_master <- read.csv("city_master_final.csv")
 }
 
-about_usPage <- tabPanel("About Us",
+about_usPage <- tabPanel("About Us!")
                     fluidRow(
                       column(width = 12,
-                             h2("About Us"),
+                             h2("Meet the Team"),
                              hr()
                       )
-                    ),
+                    )
                     fluidRow(
                       box(width = 12,
-                          h3("Meet The Team"),
                           hr(),
                           fluidRow(
                             column(width = 2,
@@ -21,7 +20,7 @@ about_usPage <- tabPanel("About Us",
                             ),
                             column(width = 10,
                                    h3("Callie Hutton"),
-                                   p("Callie Hutton is a senior History major and Data Science minor from Memphis, Tennessee. After she graduates, Callie will be working in Financial Risk Management in New York City. Her top three cities were _________!")
+                                   p("Callie Hutton is a senior History major and Data Science minor from Memphis, Tennessee. After she graduates, Callie will be working in Financial Risk Management in New York City. Her top three cities are New York City, Washington, DC, and Houston, TX!")
                             )
                           ),
                           hr(),
@@ -36,7 +35,7 @@ about_usPage <- tabPanel("About Us",
                             )
                           )
                       )
-                          ),
+                          )
                           fluidRow(
                             box(
                               title = "Citations",
@@ -70,6 +69,6 @@ about_usPage <- tabPanel("About Us",
                                 ),
                               )
                             )
-)
+
 
                         
