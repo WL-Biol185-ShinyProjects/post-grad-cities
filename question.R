@@ -4,6 +4,26 @@ rescale01 <- function(x) {
   (x - min(x)) / (max(x) - min(x))
 }
 
+# Maps each rent answer to its c(lower, upper) dollar range. Names must match the radio button values exactly.
+rent_ranges <- list(
+  "under1000" = c(0,    1000),
+  "1000_1499" = c(1000, 1500),
+  "1500_1999" = c(1500, 2000),
+  "2000_2499" = c(2000, 2500),
+  "2500_2999" = c(2500, 3000),
+  "3000plus"  = c(3000, Inf)
+)
+
+# Scores each city's rent from 0 to 1: 1 inside the chosen range, fading to 0 as rent moves outside it. Over budget is penalized more than under budget, and cities with missing rent get 0.
+rent_fit <- function(rent, range, tol = 500, under_weight = 0.25) {
+  over  <- pmax(rent - range[2], 0)
+  under <- pmax(range[1] - rent, 0)
+  fit   <- 1 - (over + under_weight * under) / tol
+  fit   <- pmax(fit, 0)
+  fit[is.na(fit)] <- 0
+  fit
+}
+
 questionPage <- tabPanel(
   "Find Your Ideal Post Grad City",
   
@@ -72,7 +92,7 @@ questionPage <- tabPanel(
                            "No preference" = "any"),
                selected = character(0)),
   
-  radioButtons("q_rent", "4. What monthly rent range would you be willing to pay?",
+  radioButtons("q_rent", "4. What is the most you would pay for monthly rent?",
                choices = c("Under $1,000" = "under1000",
                            "$1,000–$1,499" = "1000_1499",
                            "$1,500–$1,999" = "1500_1999",
@@ -82,8 +102,11 @@ questionPage <- tabPanel(
                            "No preference" = "any"),
                selected = character(0)),
   
-  radioButtons("q_community", "5. Do you want a big alumni community?",
-               choices = c("A lot" = "yes", "Doesn't matter" = "no"),
+  radioButtons("q_community", "5. How important is an alumni community in your city?",
+               choices = c("Important" = "yes",
+                           "Somewhat important" = "medium",
+                           "Not important" = "no"
+                           ),
                selected = character(0)),
   
   # "none" is a choice so people who didn't play a sport / go Greek can answer
@@ -117,7 +140,6 @@ questionPage <- tabPanel(
                            "Delta Society"        = "Delta Society",
                            "Kappa Alpha"          = "Kappa Alpha",
                            "Kappa Alpha Theta"    = "Kappa Alpha Theta",
-                           "Kappa Delta"          = "Kappa Delta",
                            "Kappa Kappa Gamma"    = "Kappa Kappa Gamma",
                            "Kappa Sigma"          = "Kappa Sigma",
                            "Lambda Chi Alpha"     = "Lambda Chi Alpha",
@@ -160,29 +182,9 @@ question_server <- function(input, output) {
     if (input$q_size == "big")   score <- score + rescale01(df$pop_2025)
     if (input$q_size == "small") score <- score + (1 - rescale01(df$pop_2025))
     
-    # Q4: rent range
-    if (input$q_rent == "under1000") {
-      score <- score + (df$Rent_2025 < 1000)
-    }
-    
-    if (input$q_rent == "1000_1499") {
-      score <- score + (df$Rent_2025 >= 1000 & df$Rent_2025 < 1500)
-    }
-    
-    if (input$q_rent == "1500_1999") {
-      score <- score + (df$Rent_2025 >= 1500 & df$Rent_2025 < 2000)
-    }
-    
-    if (input$q_rent == "2000_2499") {
-      score <- score + (df$Rent_2025 >= 2000 & df$Rent_2025 < 2500)
-    }
-    
-    if (input$q_rent == "2500_2999") {
-      score <- score + (df$Rent_2025 >= 2500 & df$Rent_2025 < 3000)
-    }
-    
-    if (input$q_rent == "3000plus") {
-      score <- score + (df$Rent_2025 >= 3000)
+    # Looks up the user's range and adds each city's rent score to its total. Skipped for "No preference".
+    if (input$q_rent != "any") {
+      score <- score + rent_fit(df$Rent_2025, rent_ranges[[input$q_rent]])
     }
     
     # Q5: bigger alumni base = more points
@@ -217,3 +219,32 @@ question_server <- function(input, output) {
     )
   })
 }
+
+
+
+# Deleted this chunk because lines 185-188 does the same thing. Wanted to keep it just incase though
+
+# Q4: rent range
+# if (input$q_rent == "under1000") {
+#   score <- score + (df$Rent_2025 < 1000)
+# }
+# 
+# if (input$q_rent == "1000_1499") {
+#   score <- score + (df$Rent_2025 >= 1000 & df$Rent_2025 < 1500)
+# }
+# 
+# if (input$q_rent == "1500_1999") {
+#   score <- score + (df$Rent_2025 >= 1500 & df$Rent_2025 < 2000)
+# }
+# 
+# if (input$q_rent == "2000_2499") {
+#   score <- score + (df$Rent_2025 >= 2000 & df$Rent_2025 < 2500)
+# }
+# 
+# if (input$q_rent == "2500_2999") {
+#   score <- score + (df$Rent_2025 >= 2500 & df$Rent_2025 < 3000)
+# }
+# 
+# if (input$q_rent == "3000plus") {
+#   score <- score + (df$Rent_2025 >= 3000)
+# }
